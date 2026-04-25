@@ -9,19 +9,25 @@
 <link rel="icon" href="icon-192.png">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
-  body{background:#0a0a1a;color:#fff;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden}
-  
+  body{background:#0a0a1a;color:#fff;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;overflow-x:hidden}
+
+  .screen{display:none;flex-direction:column;min-height:100vh;min-height:100dvh}
+  .screen.active{display:flex}
+
   .header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(59,130,246,0.2)}
   .logo{font-size:20px;font-weight:700;color:#3B82F6;display:flex;align-items:center;gap:8px}
   .logo span{font-size:24px}
+  .header-right{display:flex;align-items:center;gap:12px}
   .streak-badge{background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:#fff;font-weight:800;padding:6px 14px;border-radius:20px;font-size:14px;display:flex;align-items:center;gap:6px}
   .streak-badge .fire{font-size:16px}
-  
+  .profile-btn{width:36px;height:36px;border-radius:50%;background:rgba(59,130,246,0.2);border:2px solid #3B82F6;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;transition:all 0.2s}
+  .profile-btn:hover{background:rgba(59,130,246,0.3)}
+
   .xp-bar-container{padding:12px 20px;background:rgba(59,130,246,0.05)}
   .xp-label{font-size:12px;color:#3B82F6;margin-bottom:4px;display:flex;justify-content:space-between}
   .xp-bar{height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden}
   .xp-fill{height:100%;background:linear-gradient(90deg,#3B82F6,#60A5FA);border-radius:3px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1)}
-  
+
   .card-area{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}
   .card{background:linear-gradient(145deg,#141428,#0d0d1a);border:1px solid rgba(59,130,246,0.3);border-radius:20px;padding:32px 24px;max-width:400px;width:100%;position:relative;overflow:hidden}
   .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#3B82F6,transparent)}
@@ -30,11 +36,13 @@
   .card-title{font-size:22px;font-weight:700;margin-bottom:12px;line-height:1.3}
   .card-body{font-size:15px;line-height:1.7;color:rgba(255,255,255,0.8);margin-bottom:8px}
   .card-cta{font-size:14px;color:#3B82F6;font-weight:600;font-style:italic;margin-top:16px}
-  
+  .card-director{font-size:13px;color:rgba(59,130,246,0.7);margin-top:12px;padding-top:12px;border-top:1px solid rgba(59,130,246,0.15);display:flex;align-items:flex-start;gap:6px}
+  .card-director .icon{flex-shrink:0}
+
   .xp-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);font-size:48px;font-weight:900;color:#3B82F6;text-shadow:0 0 30px rgba(59,130,246,0.5);pointer-events:none;z-index:100;opacity:0;transition:none}
   .xp-popup.show{animation:xpBurst 0.8s cubic-bezier(0.4,0,0.2,1) forwards}
   @keyframes xpBurst{0%{transform:translate(-50%,-50%) scale(0);opacity:0}30%{transform:translate(-50%,-50%) scale(1.3);opacity:1}60%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-70%) scale(0.8);opacity:0}}
-  
+
   .actions{padding:20px;display:flex;gap:12px;max-width:400px;width:100%;margin:0 auto}
   .btn{flex:1;padding:16px 8px;border:none;border-radius:14px;font-size:15px;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:1px;transition:all 0.2s}
   .btn:active{transform:scale(0.95)}
@@ -44,74 +52,314 @@
   .btn-save:hover{background:rgba(59,130,246,0.1)}
   .btn-skip{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.4)}
   .btn-skip:hover{background:rgba(255,255,255,0.08)}
-  
+
   .card.exit{animation:cardExit 0.3s ease-in forwards}
   .card.enter{animation:cardEnter 0.3s ease-out forwards}
   @keyframes cardExit{to{transform:translateX(-100px);opacity:0}}
   @keyframes cardEnter{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
-  
+
   .footer{text-align:center;padding:16px;font-size:11px;color:rgba(255,255,255,0.3);border-top:1px solid rgba(255,255,255,0.05)}
   .footer a{color:rgba(59,130,246,0.5);text-decoration:none}
-  
+
   .empty{text-align:center;padding:40px 20px}
   .empty .icon{font-size:64px;margin-bottom:16px}
   .empty h2{color:#3B82F6;margin-bottom:8px}
   .empty p{color:rgba(255,255,255,0.5);font-size:14px}
+
+  /* === WIZARD === */
+  .wizard{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}
+  .wizard-card{background:linear-gradient(145deg,#141428,#0d0d1a);border:1px solid rgba(59,130,246,0.3);border-radius:20px;padding:40px 28px;max-width:420px;width:100%;text-align:center;position:relative;overflow:hidden}
+  .wizard-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#3B82F6,transparent)}
+  .wizard-step{display:none}
+  .wizard-step.active{display:block}
+  .wizard-icon{font-size:48px;margin-bottom:16px}
+  .wizard-title{font-size:24px;font-weight:700;color:#3B82F6;margin-bottom:8px}
+  .wizard-subtitle{font-size:14px;color:rgba(255,255,255,0.5);margin-bottom:28px;line-height:1.5}
+  .wizard-input{width:100%;padding:16px 20px;background:rgba(255,255,255,0.08);border:1px solid rgba(59,130,246,0.3);border-radius:12px;color:#fff;font-size:16px;text-align:center;outline:none;transition:border-color 0.2s}
+  .wizard-input:focus{border-color:#3B82F6}
+  .wizard-input::placeholder{color:rgba(255,255,255,0.3)}
+  .wizard-btn{display:inline-block;padding:16px 48px;background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:#fff;font-weight:800;font-size:16px;border:none;border-radius:14px;cursor:pointer;margin-top:24px;text-transform:uppercase;letter-spacing:1px;transition:all 0.2s}
+  .wizard-btn:active{transform:scale(0.95)}
+  .wizard-btn:disabled{opacity:0.4;cursor:not-allowed}
+
+  .category-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0;text-align:left;max-height:360px;overflow-y:auto;padding-right:4px}
+  .category-grid::-webkit-scrollbar{width:4px}
+  .category-grid::-webkit-scrollbar-thumb{background:rgba(59,130,246,0.3);border-radius:2px}
+  .category-option{padding:14px 16px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;cursor:pointer;transition:all 0.2s;font-size:14px;display:flex;align-items:center;gap:10px}
+  .category-option:hover{border-color:rgba(59,130,246,0.4);background:rgba(59,130,246,0.05)}
+  .category-option.selected{border-color:#3B82F6;background:rgba(59,130,246,0.15);color:#3B82F6}
+  .category-option .cat-icon{font-size:18px;flex-shrink:0}
+  .category-option .cat-label{font-weight:600}
+
+  .wizard-progress{display:flex;gap:8px;justify-content:center;margin-bottom:24px}
+  .wizard-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);transition:all 0.3s}
+  .wizard-dot.active{background:#3B82F6;width:24px;border-radius:4px}
+  .wizard-dot.done{background:rgba(59,130,246,0.5)}
+
+  /* === PROFILE === */
+  .profile-container{flex:1;padding:20px;max-width:420px;width:100%;margin:0 auto}
+  .profile-header{text-align:center;padding:20px 0 30px}
+  .profile-avatar{width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#1D4ED8);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 16px;border:3px solid rgba(59,130,246,0.5)}
+  .profile-name{font-size:24px;font-weight:700;color:#3B82F6}
+  .profile-category{font-size:14px;color:rgba(255,255,255,0.5);margin-top:4px}
+  .profile-joined{font-size:12px;color:rgba(255,255,255,0.3);margin-top:4px}
+  .stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:20px 0}
+  .stat-card{background:rgba(255,255,255,0.05);border:1px solid rgba(59,130,246,0.15);border-radius:14px;padding:16px;text-align:center}
+  .stat-value{font-size:28px;font-weight:800;color:#3B82F6}
+  .stat-label{font-size:11px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+  .profile-section{margin-top:24px}
+  .profile-section-title{font-size:13px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px}
+  .streak-calendar{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+  .cal-day{width:100%;aspect-ratio:1;border-radius:4px;background:rgba(255,255,255,0.05)}
+  .cal-day.active{background:rgba(59,130,246,0.4)}
+  .cal-day.today{border:1px solid #3B82F6}
+  .back-btn{display:block;width:100%;padding:16px;background:rgba(255,255,255,0.05);border:1px solid rgba(59,130,246,0.2);border-radius:14px;color:#3B82F6;font-weight:700;font-size:15px;cursor:pointer;text-align:center;margin-top:24px;transition:all 0.2s}
+  .back-btn:hover{background:rgba(59,130,246,0.1)}
+  .reset-btn{display:block;width:100%;padding:12px;background:none;border:1px solid rgba(255,80,80,0.2);border-radius:14px;color:rgba(255,80,80,0.5);font-size:12px;cursor:pointer;text-align:center;margin-top:12px;transition:all 0.2s}
+  .reset-btn:hover{border-color:rgba(255,80,80,0.5);color:rgba(255,80,80,0.8)}
+
+  .level-up{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity 0.3s}
+  .level-up.show{opacity:1;pointer-events:auto}
+  .level-up-content{text-align:center;animation:levelPop 0.5s ease-out}
+  .level-up-icon{font-size:64px;margin-bottom:12px}
+  .level-up-text{font-size:32px;font-weight:900;color:#3B82F6;text-shadow:0 0 40px rgba(59,130,246,0.5)}
+  .level-up-sub{font-size:16px;color:rgba(255,255,255,0.6);margin-top:8px}
+  @keyframes levelPop{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo"><span>🏆</span> THE EDGE</div>
-  <div class="streak-badge"><span class="fire">🔥</span> <span id="streakCount">0</span> day streak</div>
-</div>
-
-<div class="xp-bar-container">
-  <div class="xp-label">
-    <span>LEVEL <span id="levelNum">1</span></span>
-    <span><span id="xpCurrent">0</span> / <span id="xpNeeded">100</span> XP</span>
+<!-- ========== SCREEN: INTAKE WIZARD ========== -->
+<div class="screen" id="screen-wizard">
+  <div class="header">
+    <div class="logo"><span>🏆</span> THE EDGE</div>
   </div>
-  <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+  <div class="wizard">
+    <div class="wizard-card">
+      <div class="wizard-progress">
+        <div class="wizard-dot active" id="dot-0"></div>
+        <div class="wizard-dot" id="dot-1"></div>
+        <div class="wizard-dot" id="dot-2"></div>
+      </div>
+
+      <div class="wizard-step active" id="wiz-step-0">
+        <div class="wizard-icon">🏆</div>
+        <div class="wizard-title">Welcome to The Edge.</div>
+        <div class="wizard-subtitle">Mental conditioning starts with knowing who's in the arena.<br>What should we call you?</div>
+        <input type="text" class="wizard-input" id="wizName" placeholder="Your first name" maxlength="20" autocomplete="off">
+        <br>
+        <button class="wizard-btn" id="wizNameBtn" disabled onclick="wizardNext(1)">Continue →</button>
+      </div>
+
+      <div class="wizard-step" id="wiz-step-1">
+        <div class="wizard-icon">⚡</div>
+        <div class="wizard-title">What's your sport?</div>
+        <div class="wizard-subtitle">Pick your arena. This shapes your daily performance resets.</div>
+        <div class="category-grid" id="categoryGrid"></div>
+        <button class="wizard-btn" id="wizCatBtn" disabled onclick="wizardNext(2)">Lock it in →</button>
+      </div>
+
+      <div class="wizard-step" id="wiz-step-2">
+        <div class="wizard-icon">🔥</div>
+        <div class="wizard-title" id="wizConfirmTitle">You're in.</div>
+        <div class="wizard-subtitle" id="wizConfirmSub">The edge is yours. Your personalized mental conditioning engine is loaded.</div>
+        <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:14px;padding:20px;margin:16px 0;text-align:left">
+          <div style="font-size:13px;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Your Profile</div>
+          <div style="font-size:18px;font-weight:700;color:#3B82F6" id="wizProfileName"></div>
+          <div style="font-size:14px;color:rgba(255,255,255,0.6);margin-top:4px" id="wizProfileCat"></div>
+        </div>
+        <div style="font-size:13px;color:rgba(255,255,255,0.4);margin-top:12px">One card. One practice. Every day.<br>Your streak is your edge.</div>
+        <button class="wizard-btn" onclick="finishWizard()">⚡ Launch The Edge</button>
+      </div>
+    </div>
+  </div>
+  <div class="footer">© 2026 MindWell Solution Group LLC</div>
 </div>
 
-<div class="card-area" id="cardArea"></div>
-
-<div class="actions" id="actions">
-  <button class="btn btn-act" onclick="respond('act')">⚡ Act</button>
-  <button class="btn btn-save" onclick="respond('save')">💾 Save</button>
-  <button class="btn btn-skip" onclick="respond('skip')">→ Skip</button>
+<!-- ========== SCREEN: DAILY LOOP ========== -->
+<div class="screen" id="screen-daily">
+  <div class="header">
+    <div class="logo"><span>🏆</span> THE EDGE</div>
+    <div class="header-right">
+      <div class="streak-badge"><span class="fire">🔥</span> <span id="streakCount">0</span></div>
+      <div class="profile-btn" onclick="showProfile()">👤</div>
+    </div>
+  </div>
+  <div class="xp-bar-container">
+    <div class="xp-label">
+      <span>LEVEL <span id="levelNum">1</span></span>
+      <span><span id="xpCurrent">0</span> / <span id="xpNeeded">100</span> XP</span>
+    </div>
+    <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+  </div>
+  <div class="card-area" id="cardArea"></div>
+  <div class="actions" id="actions">
+    <button class="btn btn-act" onclick="respond('act')">⚡ Act</button>
+    <button class="btn btn-save" onclick="respond('save')">💾 Save</button>
+    <button class="btn btn-skip" onclick="respond('skip')">→ Skip</button>
+  </div>
+  <div class="xp-popup" id="xpPopup">XP +10</div>
+  <div class="footer">
+    <a href="index.html">← Home</a> &nbsp;|&nbsp; © 2026 MindWell Solution Group LLC
+  </div>
 </div>
 
-<div class="xp-popup" id="xpPopup">XP +10</div>
+<!-- ========== SCREEN: PROFILE ========== -->
+<div class="screen" id="screen-profile">
+  <div class="header">
+    <div class="logo"><span>🏆</span> THE EDGE</div>
+  </div>
+  <div class="profile-container">
+    <div class="profile-header">
+      <div class="profile-avatar" id="profileAvatar">🏆</div>
+      <div class="profile-name" id="profileName"></div>
+      <div class="profile-category" id="profileCategory"></div>
+      <div class="profile-joined" id="profileJoined"></div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value" id="statLevel">1</div>
+        <div class="stat-label">Level</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statXP">0</div>
+        <div class="stat-label">Total XP</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statStreak">0</div>
+        <div class="stat-label">Streak</div>
+      </div>
+    </div>
+    <div class="stats-grid" style="grid-template-columns:1fr 1fr">
+      <div class="stat-card">
+        <div class="stat-value" id="statActs">0</div>
+        <div class="stat-label">Acts</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="statSaves">0</div>
+        <div class="stat-label">Saves</div>
+      </div>
+    </div>
+    <div class="profile-section">
+      <div class="profile-section-title">Last 28 Days</div>
+      <div class="streak-calendar" id="streakCalendar"></div>
+    </div>
+    <button class="back-btn" onclick="showDaily()">← Back to Daily Loop</button>
+    <button class="reset-btn" onclick="resetProfile()">Reset Profile</button>
+  </div>
+  <div class="footer">© 2026 MindWell Solution Group LLC</div>
+</div>
 
-<div class="footer">
-  <a href="index.html">← Back to Home</a> &nbsp;|&nbsp; © 2026 MindWell Solution Group LLC
+<!-- ========== LEVEL UP OVERLAY ========== -->
+<div class="level-up" id="levelUpOverlay" onclick="this.classList.remove('show')">
+  <div class="level-up-content">
+    <div class="level-up-icon">⚡</div>
+    <div class="level-up-text" id="levelUpText">LEVEL 2</div>
+    <div class="level-up-sub">The edge just got sharper.</div>
+  </div>
 </div>
 
 <script>
-// === DAILY CARDS: THE EDGE — Proactive Mental Conditioning ===
-const CARDS = [
-  {title:"The 5-4-3-2-1 Reset",body:"Right now, notice: 5 things you can see. 4 you can touch. 3 you can hear. 2 you can smell. 1 you can taste. This sensory grounding technique pulls your nervous system out of fight-or-flight in under 60 seconds.",cta:"Do this reset right now before moving on."},
-  {title:"The Cold Exposure",body:"End your shower with 30 seconds of cold water today. Not for punishment—for neuroplasticity. Cold exposure triggers norepinephrine release, sharpening focus and building stress resilience. The discomfort IS the benefit.",cta:"30 seconds of cold. Start today."},
-  {title:"The Reframe Protocol",body:"Write down the most stressful thought in your head right now. Then rewrite it starting with: 'What if this is actually...' Your brain can't hold anxiety and curiosity simultaneously. Curiosity wins.",cta:"Rewrite one anxious thought as a curious question."},
-  {title:"The Micro-Meditation",body:"Set a timer for 90 seconds. Close your eyes. Breathe in for 4, hold for 4, out for 6. That's it. This activates your vagus nerve and shifts you from sympathetic to parasympathetic dominance. Science, not woo.",cta:"90 seconds. Right now. Eyes closed."},
-  {title:"The Identity Statement",body:"Write this down and read it aloud: 'I am the kind of person who handles pressure with clarity.' Your brain doesn't know the difference between identity and aspiration—so claim the version of you that you're building.",cta:"Write your identity statement and say it once."},
-  {title:"The Stress Inoculation",body:"Think of something mildly uncomfortable you've been avoiding. A difficult email. A hard conversation. Do it in the next 60 minutes. Controlled exposure to stress builds the same resilience as physical training builds muscle.",cta:"Complete one uncomfortable task within the hour."},
-  {title:"The Gratitude Rewrite",body:"Before your feet hit the floor tomorrow, name 3 specific things from yesterday you're grateful for. Not generic—specific. 'The way my coffee tasted at 7am.' Specificity activates real neural reward pathways.",cta:"Set a reminder: 3 specifics before your feet hit the floor."},
-  {title:"The Energy Audit",body:"Rate your energy right now: Physical (1-10), Mental (1-10), Emotional (1-10). The lowest score tells you what needs attention first. Most people try to think their way out of physical exhaustion. Don't be most people.",cta:"Write your three scores and address the lowest one."},
-  {title:"The Peak-State Anchor",body:"Remember a moment you felt absolutely unstoppable. Close your eyes and relive it for 30 seconds—the sounds, the feeling, the confidence. Now press your thumb and index finger together. You're building a physical anchor to that state.",cta:"Build your anchor. You'll use it when pressure hits."},
-  {title:"The Digital Sunset",body:"No screens for the last 30 minutes before sleep tonight. Read, stretch, breathe. Blue light suppresses melatonin by up to 58%. Your morning edge starts with last night's sleep quality.",cta:"Set an alarm 30 min before bed. Screens off."},
-  {title:"The Movement Snack",body:"Right now: 20 air squats or a 2-minute walk. Not for fitness—for cognition. A single bout of movement increases BDNF (brain-derived neurotrophic factor) for up to 2 hours. Your brain runs better when your body moves.",cta:"20 squats or 2-minute walk. Right now."},
-  {title:"The Worry Window",body:"Schedule exactly 15 minutes today to worry on purpose. Write every fear down. Outside that window, when worry creeps in, say: 'Not now, I have a time for that.' Containment reduces anxiety more than suppression ever will.",cta:"Block 15 worry-minutes on your calendar."},
-  {title:"The 2-Minute Journal",body:"Write for exactly 2 minutes: 'Right now I feel ___ because ___.' Don't edit, don't judge. Expressive writing reduces cortisol and activates the prefrontal cortex. You're literally thinking yourself calmer.",cta:"Set a timer. Write for 2 minutes straight."},
-  {title:"The Power Posture",body:"Stand up. Feet shoulder-width apart. Hands on hips. Chin slightly up. Hold for 2 minutes. Expansive postures decrease cortisol by 25% and increase testosterone by 20%. Your body tells your brain how to feel.",cta:"2 minutes in power posture. Do it now."}
+// ===================================================================
+// THE EDGE — Proactive Mental Conditioning Engine
+// © 2026 MindWell Solution Group LLC
+// ===================================================================
+
+// === 20 SPORTS ===
+const CATEGORIES = [
+  {id:"football",    label:"Football",      icon:"🏈"},
+  {id:"basketball",  label:"Basketball",    icon:"🏀"},
+  {id:"baseball",    label:"Baseball",      icon:"⚾"},
+  {id:"soccer",      label:"Soccer",        icon:"⚽"},
+  {id:"hockey",      label:"Hockey",        icon:"🏒"},
+  {id:"tennis",      label:"Tennis",        icon:"🎾"},
+  {id:"golf",        label:"Golf",          icon:"⛳"},
+  {id:"swimming",    label:"Swimming",      icon:"🏊"},
+  {id:"track",       label:"Track & Field", icon:"🏃"},
+  {id:"boxing",      label:"Boxing",        icon:"🥊"},
+  {id:"mma",         label:"MMA",           icon:"🥋"},
+  {id:"wrestling",   label:"Wrestling",     icon:"🤼"},
+  {id:"volleyball",  label:"Volleyball",    icon:"🏐"},
+  {id:"lacrosse",    label:"Lacrosse",      icon:"🥍"},
+  {id:"rugby",       label:"Rugby",         icon:"🏉"},
+  {id:"gymnastics",  label:"Gymnastics",    icon:"🤸"},
+  {id:"cycling",     label:"Cycling",       icon:"🚴"},
+  {id:"crossfit",    label:"CrossFit",      icon:"🏋️"},
+  {id:"rowing",      label:"Rowing",        icon:"🚣"},
+  {id:"skiing",      label:"Skiing",        icon:"⛷️"}
 ];
 
-let state = JSON.parse(localStorage.getItem('edge_state') || 'null') || {
-  xp: 0, level: 1, streak: 0, lastDate: null, acted: [], saved: [], cardIndex: 0
+// === DIRECTOR CONTEXTS (sport-specific cues) ===
+const DIRECTOR = {
+  "football":   ["before your next snap","in the film room","during two-a-days","at your pre-game walkthrough","in the weight room","when the play breaks down"],
+  "basketball": ["before your next free throw","during the timeout huddle","in your shooting warmup","when the shot clock winds down","at practice today","during your pre-game routine"],
+  "baseball":   ["in the batter's box","before your next at-bat","on the mound","during batting practice","in the on-deck circle","between innings"],
+  "soccer":     ["before your next match","during halftime","in your pre-game warmup","when taking that penalty","during training today","when the pressure builds in extra time"],
+  "hockey":     ["before your next shift","in the locker room","during warmups","when the puck drops","in practice today","during the power play"],
+  "tennis":     ["before your next serve","between sets","during your pre-match routine","when you're down a break","at match point","during your rally"],
+  "golf":       ["on the first tee","before your next putt","during your pre-shot routine","when the pressure builds on 18","at the driving range","between holes"],
+  "swimming":   ["on the starting block","before your next race","during your warmup laps","when you hit the wall for the turn","in your dryland training","during your cooldown"],
+  "track":      ["in the starting blocks","before your next race","during your warmup","when fatigue sets in at the back straight","at practice today","in your recovery routine"],
+  "boxing":     ["before the bell rings","between rounds","during your shadowboxing","when you're against the ropes","in your morning roadwork","during sparring"],
+  "mma":        ["before you step in the cage","between rounds","during your striking drills","when you're in the clinch","in your morning training","during your sparring session"],
+  "wrestling":  ["before your next match","during your warmup","when you're in the neutral position","in the third period","during your practice room session","when the ref signals ready"],
+  "volleyball": ["before your next serve","during the timeout","in your pre-match routine","when you're rotating to serve","during your warmup","when the set is on the line"],
+  "lacrosse":   ["before faceoff","during your pre-game stick work","when you're behind the cage","in your shooting drills","during the timeout","when the clock is winding down"],
+  "rugby":      ["before kickoff","in the scrum","during halftime","when the tryline is in sight","at training today","during your lineout preparation"],
+  "gymnastics": ["before your routine","on the chalk stand","during your warmup","when you're saluting the judges","in your visualization practice","between apparatus rotations"],
+  "cycling":    ["before the race starts","during your interval training","when the hill gets steep","in your recovery spin","at the starting line","during the final sprint"],
+  "crossfit":   ["before the WOD","during your warmup","when your muscles are screaming to stop","in your skill practice","between rounds","when the clock is counting down"],
+  "rowing":     ["before the starting signal","during your warm-up strokes","when the rate is at its peak","in your steady-state training","at the catch","during your power pieces"],
+  "skiing":     ["in the starting gate","before your next run","during your course inspection","when the slope steepens","in your dry-land training","between runs"]
 };
 
-function saveState(){ localStorage.setItem('edge_state', JSON.stringify(state)); }
+// === 30-DAY CONTENT MATRIX ===
+const CARDS = [
+  {title:"The 5-4-3-2-1 Reset",body:"Right now, notice: 5 things you can see. 4 you can touch. 3 you can hear. 2 you can smell. 1 you can taste. This sensory grounding technique pulls your nervous system out of fight-or-flight in under 60 seconds.",cta:"Do this reset right now before moving on."},
+  {title:"The Cold Exposure",body:"End your shower with 30 seconds of cold water today. Not for punishment — for neuroplasticity. Cold exposure triggers norepinephrine release, sharpening focus and building stress resilience. The discomfort IS the benefit.",cta:"30 seconds of cold. Start today."},
+  {title:"The Reframe Protocol",body:"Write down the most stressful thought in your head right now. Then rewrite it starting with: 'What if this is actually...' Your brain can't hold anxiety and curiosity simultaneously. Curiosity wins.",cta:"Rewrite one anxious thought as a curious question."},
+  {title:"The Micro-Meditation",body:"Set a timer for 90 seconds. Close your eyes. Breathe in for 4, hold for 4, out for 6. That's it. This activates your vagus nerve and shifts you from sympathetic to parasympathetic dominance. Science, not woo.",cta:"90 seconds. Right now. Eyes closed."},
+  {title:"The Identity Statement",body:"Write this down and read it aloud: 'I am the kind of athlete who handles pressure with clarity.' Your brain doesn't know the difference between identity and aspiration — so claim the version of you that you're building.",cta:"Write your identity statement and say it once."},
+  {title:"The Stress Inoculation",body:"Think of something mildly uncomfortable you've been avoiding. A difficult conversation. An extra set. Do it in the next 60 minutes. Controlled exposure to stress builds the same resilience as physical training builds muscle.",cta:"Complete one uncomfortable task within the hour."},
+  {title:"The Gratitude Rewrite",body:"Before your feet hit the floor tomorrow, name 3 specific things from yesterday you're grateful for. Not generic — specific. 'The way the air felt during my warmup.' Specificity activates real neural reward pathways.",cta:"Set a reminder: 3 specifics before your feet hit the floor."},
+  {title:"The Energy Audit",body:"Rate your energy right now: Physical (1-10), Mental (1-10), Emotional (1-10). The lowest score tells you what needs attention first. Most people try to think their way out of physical exhaustion. Don't be most people.",cta:"Write your three scores and address the lowest one."},
+  {title:"The Peak-State Anchor",body:"Remember a moment you felt absolutely unstoppable. Close your eyes and relive it for 30 seconds — the sounds, the feeling, the confidence. Now press your thumb and index finger together. You're building a physical anchor to that state.",cta:"Build your anchor. You'll use it when pressure hits."},
+  {title:"The Digital Sunset",body:"No screens for the last 30 minutes before sleep tonight. Read, stretch, breathe. Blue light suppresses melatonin by up to 58%. Your morning edge starts with last night's sleep quality.",cta:"Set an alarm 30 min before bed. Screens off."},
+  {title:"The Movement Snack",body:"Right now: 20 air squats or a 2-minute walk. Not for fitness — for cognition. A single bout of movement increases BDNF (brain-derived neurotrophic factor) for up to 2 hours. Your brain runs better when your body moves.",cta:"20 squats or 2-minute walk. Right now."},
+  {title:"The Worry Window",body:"Schedule exactly 15 minutes today to worry on purpose. Write every fear down. Outside that window, when worry creeps in, say: 'Not now, I have a time for that.' Containment reduces anxiety more than suppression ever will.",cta:"Block 15 worry-minutes on your calendar."},
+  {title:"The 2-Minute Journal",body:"Write for exactly 2 minutes: 'Right now I feel ___ because ___.' Don't edit, don't judge. Expressive writing reduces cortisol and activates the prefrontal cortex. You're literally thinking yourself calmer.",cta:"Set a timer. Write for 2 minutes straight."},
+  {title:"The Power Posture",body:"Stand up. Feet shoulder-width apart. Hands on hips. Chin slightly up. Hold for 2 minutes. Expansive postures decrease cortisol by 25% and increase testosterone by 20%. Your body tells your brain how to feel.",cta:"2 minutes in power posture. Do it now."},
+  {title:"The Visualization Sprint",body:"Close your eyes for 60 seconds and visualize your best performance in perfect detail. See it from your own eyes, not as a spectator. Feel the ground under your feet, hear the sounds. Athletes who visualize in first-person activate the same motor pathways as physical practice.",cta:"60-second visualization. First person. Full detail."},
+  {title:"The Breath Lock",body:"Inhale for 4 seconds. Hold for 7 seconds. Exhale for 8 seconds. Do this 3 times. The 4-7-8 technique activates your parasympathetic nervous system faster than any other breathing pattern. Navy SEALs call it 'tactical breathing' for a reason.",cta:"Three cycles of 4-7-8. Start now."},
+  {title:"The Mental Replay",body:"Think about your last competition or practice. Pick ONE moment you'd do differently. Replay it in your mind — but this time, execute it perfectly. This isn't regret; it's reprogramming. Your brain updates its playbook through corrective visualization.",cta:"Replay and correct one moment from your last session."},
+  {title:"The Focus Funnel",body:"Your attention is a spotlight, not a floodlight. Right now, pick ONE thing that matters for your next performance. Write it on your hand, your mirror, or your lock screen. When your mind drifts — and it will — that single focus pulls you back.",cta:"Define your ONE focus and put it where you'll see it."},
+  {title:"The Recovery Protocol",body:"Recovery isn't passive. Rate these right now: Sleep quality (1-10), Hydration (1-10), Nutrition (1-10), Mobility (1-10). Fix the lowest score today. Elite performance is built in recovery windows, not just training windows.",cta:"Score yourself and fix the weakest link today."},
+  {title:"The Confidence Stack",body:"Write down 3 moments where you dominated. Not kinda-sorta did well — DOMINATED. Read them before your next event. Confidence isn't born; it's built from evidence. Your stack is your evidence folder.",cta:"Build your 3-moment confidence stack right now."},
+  {title:"The Pre-Game Ritual",body:"Design a 5-minute pre-performance ritual: (1) Physical activation — 10 jumping jacks. (2) Mental cue — your identity statement. (3) Emotional anchor — thumb-to-finger press. Rituals don't guarantee performance, but they guarantee presence.",cta:"Write out your 5-minute ritual and practice it today."},
+  {title:"The Pain Reframe",body:"Next time discomfort hits during training, don't fight it — label it. 'This is my body adapting.' 'This is the signal that I'm growing.' Pain is information, not punishment. The athletes who reframe pain as data outperform those who resist it.",cta:"Reframe one moment of discomfort today as growth data."},
+  {title:"The Zone Trigger",body:"Identify your personal flow-state trigger. For some it's music. For others it's a warmup sequence or a phrase. Test different triggers today and note which one shifts your state fastest. Your zone isn't random — it's accessible with the right key.",cta:"Experiment with 3 flow triggers and find your fastest key."},
+  {title:"The Self-Talk Script",body:"Record yourself for 10 minutes and listen back. Most athletes would be horrified by their internal dialogue if they heard it out loud. Today, write 3 phrases you want your inner coach to say: 'I've trained for this.' 'I'm built for pressure.' 'Next play.'",cta:"Write your 3 inner-coach phrases and repeat them 5 times."},
+  {title:"The Body Scan",body:"Start at your toes and work up to your scalp over 90 seconds. At each zone — feet, calves, quads, hips, core, chest, shoulders, neck, face — notice tension and release it. A body scan before performance reduces muscle tension by up to 30%.",cta:"90-second body scan. Right now. Toes to scalp."},
+  {title:"The Adversity Flip",body:"Think of the worst performance you've ever had. Now find the ONE lesson that made you better afterward. Every champion has a loss that became fuel. Your worst moment is only wasted if you refuse to extract the lesson.",cta:"Name your worst performance, then name the gift it gave you."},
+  {title:"The Process Goal",body:"Outcome goals create anxiety. Process goals create focus. Today, replace 'I want to win' with 'I want to execute my first three moves with precision.' You can't control outcomes, but you can control execution.",cta:"Set one process goal for your next session."},
+  {title:"The Mindful Minute",body:"For 60 seconds, do nothing. No phone, no music, no movement. Just be. Boredom tolerance is an athletic skill. The athlete who can sit in stillness can sit in chaos. Both require the same nervous system regulation.",cta:"One minute. No inputs. Just presence."},
+  {title:"The Victory Log",body:"Before bed tonight, write down 3 small wins from today. Not results — efforts. 'I showed up when I didn't want to.' 'I pushed through the last set.' Your brain consolidates memory during sleep. Feed it wins.",cta:"Write 3 wins in your notes tonight before sleep."},
+  {title:"The Sleep Protocol",body:"Tonight: room temp at 65-68°F. No caffeine after 2pm. No screens 30 min before bed. Sleep in complete darkness. Sleep is the #1 legal performance enhancer in sports. A single night of poor sleep reduces reaction time by 300%.",cta:"Implement at least 2 of these 4 sleep rules tonight."}
+];
+
+// === STATE ===
+const STORAGE_KEY = 'edge_state';
+const PROFILE_KEY = 'edge_profile';
+
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null') || {
+  xp:0, level:1, streak:0, lastDate:null,
+  acted:[], saved:[], history:[]
+};
+
+let profile = JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null');
+
+function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function saveProfile(){ localStorage.setItem(PROFILE_KEY, JSON.stringify(profile)); }
 
 function checkStreak(){
   const today = new Date().toDateString();
@@ -120,9 +368,80 @@ function checkStreak(){
     const diff = Math.floor((new Date(today) - last) / 86400000);
     if(diff > 1) state.streak = 0;
   }
+  saveState();
 }
-checkStreak();
 
+// === SCREENS ===
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+}
+
+// === WIZARD ===
+let wizStep = 0;
+let selectedCategory = null;
+
+function initWizard(){
+  const grid = document.getElementById('categoryGrid');
+  grid.innerHTML = CATEGORIES.map(c => `
+    <div class="category-option" data-id="${c.id}" onclick="selectCategory('${c.id}')">
+      <span class="cat-icon">${c.icon}</span>
+      <span class="cat-label">${c.label}</span>
+    </div>
+  `).join('');
+
+  const nameInput = document.getElementById('wizName');
+  const nameBtn = document.getElementById('wizNameBtn');
+  nameInput.addEventListener('input', () => {
+    nameBtn.disabled = nameInput.value.trim().length < 1;
+  });
+  nameInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' && !nameBtn.disabled) wizardNext(1);
+  });
+}
+
+function selectCategory(id){
+  selectedCategory = id;
+  document.querySelectorAll('.category-option').forEach(el => {
+    el.classList.toggle('selected', el.dataset.id === id);
+  });
+  document.getElementById('wizCatBtn').disabled = false;
+}
+
+function wizardNext(step){
+  wizStep = step;
+  document.querySelectorAll('.wizard-step').forEach((s,i) => {
+    s.classList.toggle('active', i === step);
+  });
+  document.querySelectorAll('.wizard-dot').forEach((d,i) => {
+    d.classList.toggle('active', i === step);
+    d.classList.toggle('done', i < step);
+  });
+
+  if(step === 2){
+    const name = document.getElementById('wizName').value.trim();
+    const cat = CATEGORIES.find(c => c.id === selectedCategory);
+    document.getElementById('wizConfirmTitle').textContent = `${name}, you're in.`;
+    document.getElementById('wizProfileName').textContent = name;
+    document.getElementById('wizProfileCat').textContent = cat.icon + ' ' + cat.label;
+  }
+}
+
+function finishWizard(){
+  const name = document.getElementById('wizName').value.trim();
+  const cat = CATEGORIES.find(c => c.id === selectedCategory);
+  profile = {
+    name: name,
+    category: selectedCategory,
+    categoryLabel: cat.label,
+    categoryIcon: cat.icon,
+    joinDate: new Date().toISOString()
+  };
+  saveProfile();
+  startDaily();
+}
+
+// === DAILY LOOP ===
 function getToday(){ return new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}); }
 
 function getDailyCard(){
@@ -130,11 +449,20 @@ function getDailyCard(){
   return CARDS[dayOfYear % CARDS.length];
 }
 
+function getDirectorLine(){
+  if(!profile || !profile.category) return null;
+  const contexts = DIRECTOR[profile.category];
+  if(!contexts) return null;
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(),0,0)) / 86400000);
+  const ctx = contexts[dayOfYear % contexts.length];
+  return `⚡ ${profile.name}, use this ${ctx}.`;
+}
+
 function renderCard(){
   const card = getDailyCard();
   const today = new Date().toDateString();
   const alreadyDone = state.acted.includes(today) || state.saved.includes(today);
-  
+
   if(alreadyDone){
     document.getElementById('cardArea').innerHTML = `
       <div class="empty">
@@ -146,7 +474,11 @@ function renderCard(){
     document.getElementById('actions').style.display = 'none';
     return;
   }
-  
+
+  const directorLine = getDirectorLine();
+  const directorHTML = directorLine ?
+    `<div class="card-director"><span class="icon">🏆</span>${directorLine}</div>` : '';
+
   document.getElementById('cardArea').innerHTML = `
     <div class="card enter" id="activeCard">
       <div class="card-label">🏆 Today's Edge</div>
@@ -154,6 +486,7 @@ function renderCard(){
       <h2 class="card-title">${card.title}</h2>
       <p class="card-body">${card.body}</p>
       <p class="card-cta">${card.cta}</p>
+      ${directorHTML}
     </div>`;
   document.getElementById('actions').style.display = 'flex';
 }
@@ -175,29 +508,44 @@ function showXP(amount){
   popup.classList.add('show');
 }
 
+function showLevelUp(newLevel){
+  const overlay = document.getElementById('levelUpOverlay');
+  document.getElementById('levelUpText').textContent = `LEVEL ${newLevel}`;
+  overlay.classList.add('show');
+  setTimeout(() => overlay.classList.remove('show'), 2500);
+}
+
 function respond(action){
   const today = new Date().toDateString();
   const card = document.getElementById('activeCard');
-  
+  const prevLevel = state.level;
+
   if(action === 'act'){
     state.xp += 10;
     state.acted.push(today);
     state.streak++;
     state.lastDate = today;
+    state.history.push({date:today, action:'act'});
     showXP(10);
   } else if(action === 'save'){
     state.xp += 5;
     state.saved.push(today);
     state.streak++;
     state.lastDate = today;
+    state.history.push({date:today, action:'save'});
     showXP(5);
   } else {
     state.lastDate = today;
+    state.history.push({date:today, action:'skip'});
   }
-  
+
   state.level = Math.floor(state.xp / 100) + 1;
   saveState();
-  
+
+  if(state.level > prevLevel){
+    setTimeout(() => showLevelUp(state.level), 400);
+  }
+
   if(card) card.classList.add('exit');
   setTimeout(() => {
     renderCard();
@@ -205,8 +553,71 @@ function respond(action){
   }, 350);
 }
 
-renderCard();
-updateUI();
+// === PROFILE ===
+function showProfile(){
+  showScreen('profile');
+  renderProfile();
+}
+
+function showDaily(){
+  showScreen('daily');
+}
+
+function renderProfile(){
+  if(!profile) return;
+  document.getElementById('profileAvatar').textContent = profile.categoryIcon || '🏆';
+  document.getElementById('profileName').textContent = profile.name;
+  document.getElementById('profileCategory').textContent = profile.categoryLabel;
+  const joinDate = new Date(profile.joinDate);
+  document.getElementById('profileJoined').textContent = 'Joined ' + joinDate.toLocaleDateString('en-US',{month:'long', day:'numeric', year:'numeric'});
+
+  document.getElementById('statLevel').textContent = state.level;
+  document.getElementById('statXP').textContent = state.xp;
+  document.getElementById('statStreak').textContent = state.streak;
+  document.getElementById('statActs').textContent = state.acted.length;
+  document.getElementById('statSaves').textContent = state.saved.length;
+
+  const cal = document.getElementById('streakCalendar');
+  const today = new Date();
+  const allDates = [...state.acted, ...state.saved];
+  let html = '';
+  for(let i = 27; i >= 0; i--){
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const ds = d.toDateString();
+    const isActive = allDates.includes(ds);
+    const isToday = i === 0;
+    html += `<div class="cal-day${isActive?' active':''}${isToday?' today':''}"></div>`;
+  }
+  cal.innerHTML = html;
+}
+
+function resetProfile(){
+  if(confirm('This will erase your profile, XP, and streaks. Are you sure?')){
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(PROFILE_KEY);
+    location.reload();
+  }
+}
+
+function startDaily(){
+  checkStreak();
+  showScreen('daily');
+  renderCard();
+  updateUI();
+}
+
+// === INIT ===
+function init(){
+  if(!profile){
+    initWizard();
+    showScreen('wizard');
+  } else {
+    startDaily();
+  }
+}
+
+init();
 
 if('serviceWorker' in navigator){
   navigator.serviceWorker.getRegistrations().then(r => r.forEach(w => w.unregister()));
