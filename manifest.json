@@ -1,20 +1,24 @@
 {
-  "name": "The Edge - Proactive AI",
+  "name": "The Edge – Athletic Mental Performance",
   "short_name": "The Edge",
-  "start_url": "/index.html",
+  "description": "Your daily performance reset. AI-powered mental conditioning for athletes.",
+  "start_url": "/app.html",
   "display": "standalone",
-  "background_color": "#1a1a1a",
-  "theme_color": "#007bff",
+  "orientation": "portrait",
+  "background_color": "#0a1628",
+  "theme_color": "#1a73e8",
   "icons": [
     {
       "src": "/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
