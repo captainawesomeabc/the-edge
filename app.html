@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>The Edge — Daily Loop</title>
+<meta name="theme-color" content="#1a1a2e">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#0a0a1a;color:#fff;font-family:'Segoe UI',system-ui,-apple-system,sans-serif;min-height:100vh;display:flex;flex-direction:column;overflow-x:hidden}
+  
+  .header{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(59,130,246,0.2)}
+  .logo{font-size:20px;font-weight:700;color:#3B82F6;display:flex;align-items:center;gap:8px}
+  .logo span{font-size:24px}
+  .streak-badge{background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:#fff;font-weight:800;padding:6px 14px;border-radius:20px;font-size:14px;display:flex;align-items:center;gap:6px}
+  .streak-badge .fire{font-size:16px}
+  
+  .xp-bar-container{padding:12px 20px;background:rgba(59,130,246,0.05)}
+  .xp-label{font-size:12px;color:#3B82F6;margin-bottom:4px;display:flex;justify-content:space-between}
+  .xp-bar{height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden}
+  .xp-fill{height:100%;background:linear-gradient(90deg,#3B82F6,#60A5FA);border-radius:3px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1)}
+  
+  .card-area{flex:1;display:flex;align-items:center;justify-content:center;padding:20px}
+  .card{background:linear-gradient(145deg,#141428,#0d0d1a);border:1px solid rgba(59,130,246,0.3);border-radius:20px;padding:32px 24px;max-width:400px;width:100%;position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,#3B82F6,transparent)}
+  .card-label{font-size:11px;text-transform:uppercase;letter-spacing:3px;color:#3B82F6;margin-bottom:8px}
+  .card-date{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:20px}
+  .card-title{font-size:22px;font-weight:700;margin-bottom:12px;line-height:1.3}
+  .card-body{font-size:15px;line-height:1.7;color:rgba(255,255,255,0.8);margin-bottom:8px}
+  .card-cta{font-size:14px;color:#3B82F6;font-weight:600;font-style:italic;margin-top:16px}
+  
+  .xp-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);font-size:48px;font-weight:900;color:#3B82F6;text-shadow:0 0 30px rgba(59,130,246,0.5);pointer-events:none;z-index:100;opacity:0;transition:none}
+  .xp-popup.show{animation:xpBurst 0.8s cubic-bezier(0.4,0,0.2,1) forwards}
+  @keyframes xpBurst{0%{transform:translate(-50%,-50%) scale(0);opacity:0}30%{transform:translate(-50%,-50%) scale(1.3);opacity:1}60%{transform:translate(-50%,-50%) scale(1);opacity:1}100%{transform:translate(-50%,-70%) scale(0.8);opacity:0}}
+  
+  .actions{padding:20px;display:flex;gap:12px;max-width:400px;width:100%;margin:0 auto}
+  .btn{flex:1;padding:16px 8px;border:none;border-radius:14px;font-size:15px;font-weight:800;cursor:pointer;text-transform:uppercase;letter-spacing:1px;transition:all 0.2s}
+  .btn:active{transform:scale(0.95)}
+  .btn-act{background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:#fff}
+  .btn-act:hover{box-shadow:0 0 20px rgba(59,130,246,0.4)}
+  .btn-save{background:rgba(255,255,255,0.1);color:#3B82F6;border:1px solid rgba(59,130,246,0.3)}
+  .btn-save:hover{background:rgba(59,130,246,0.1)}
+  .btn-skip{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.4)}
+  .btn-skip:hover{background:rgba(255,255,255,0.08)}
+  
+  .card.exit{animation:cardExit 0.3s ease-in forwards}
+  .card.enter{animation:cardEnter 0.3s ease-out forwards}
+  @keyframes cardExit{to{transform:translateX(-100px);opacity:0}}
+  @keyframes cardEnter{from{transform:translateX(100px);opacity:0}to{transform:translateX(0);opacity:1}}
+  
+  .footer{text-align:center;padding:16px;font-size:11px;color:rgba(255,255,255,0.3);border-top:1px solid rgba(255,255,255,0.05)}
+  .footer a{color:rgba(59,130,246,0.5);text-decoration:none}
+  
+  .empty{text-align:center;padding:40px 20px}
+  .empty .icon{font-size:64px;margin-bottom:16px}
+  .empty h2{color:#3B82F6;margin-bottom:8px}
+  .empty p{color:rgba(255,255,255,0.5);font-size:14px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo"><span>🏆</span> THE EDGE</div>
+  <div class="streak-badge"><span class="fire">🔥</span> <span id="streakCount">0</span> day streak</div>
+</div>
+
+<div class="xp-bar-container">
+  <div class="xp-label">
+    <span>LEVEL <span id="levelNum">1</span></span>
+    <span><span id="xpCurrent">0</span> / <span id="xpNeeded">100</span> XP</span>
+  </div>
+  <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+</div>
+
+<div class="card-area" id="cardArea"></div>
+
+<div class="actions" id="actions">
+  <button class="btn btn-act" onclick="respond('act')">⚡ Act</button>
+  <button class="btn btn-save" onclick="respond('save')">💾 Save</button>
+  <button class="btn btn-skip" onclick="respond('skip')">→ Skip</button>
+</div>
+
+<div class="xp-popup" id="xpPopup">XP +10</div>
+
+<div class="footer">
+  <a href="index.html">← Back to Home</a> &nbsp;|&nbsp; © 2026 MindWell Solution Group LLC
+</div>
+
+<script>
+// === DAILY CARDS: THE EDGE — Proactive Mental Conditioning ===
+const CARDS = [
+  {title:"The 5-4-3-2-1 Reset",body:"Right now, notice: 5 things you can see. 4 you can touch. 3 you can hear. 2 you can smell. 1 you can taste. This sensory grounding technique pulls your nervous system out of fight-or-flight in under 60 seconds.",cta:"Do this reset right now before moving on."},
+  {title:"The Cold Exposure",body:"End your shower with 30 seconds of cold water today. Not for punishment—for neuroplasticity. Cold exposure triggers norepinephrine release, sharpening focus and building stress resilience. The discomfort IS the benefit.",cta:"30 seconds of cold. Start today."},
+  {title:"The Reframe Protocol",body:"Write down the most stressful thought in your head right now. Then rewrite it starting with: 'What if this is actually...' Your brain can't hold anxiety and curiosity simultaneously. Curiosity wins.",cta:"Rewrite one anxious thought as a curious question."},
+  {title:"The Micro-Meditation",body:"Set a timer for 90 seconds. Close your eyes. Breathe in for 4, hold for 4, out for 6. That's it. This activates your vagus nerve and shifts you from sympathetic to parasympathetic dominance. Science, not woo.",cta:"90 seconds. Right now. Eyes closed."},
+  {title:"The Identity Statement",body:"Write this down and read it aloud: 'I am the kind of person who handles pressure with clarity.' Your brain doesn't know the difference between identity and aspiration—so claim the version of you that you're building.",cta:"Write your identity statement and say it once."},
+  {title:"The Stress Inoculation",body:"Think of something mildly uncomfortable you've been avoiding. A difficult email. A hard conversation. Do it in the next 60 minutes. Controlled exposure to stress builds the same resilience as physical training builds muscle.",cta:"Complete one uncomfortable task within the hour."},
+  {title:"The Gratitude Rewrite",body:"Before your feet hit the floor tomorrow, name 3 specific things from yesterday you're grateful for. Not generic—specific. 'The way my coffee tasted at 7am.' Specificity activates real neural reward pathways.",cta:"Set a reminder: 3 specifics before your feet hit the floor."},
+  {title:"The Energy Audit",body:"Rate your energy right now: Physical (1-10), Mental (1-10), Emotional (1-10). The lowest score tells you what needs attention first. Most people try to think their way out of physical exhaustion. Don't be most people.",cta:"Write your three scores and address the lowest one."},
+  {title:"The Peak-State Anchor",body:"Remember a moment you felt absolutely unstoppable. Close your eyes and relive it for 30 seconds—the sounds, the feeling, the confidence. Now press your thumb and index finger together. You're building a physical anchor to that state.",cta:"Build your anchor. You'll use it when pressure hits."},
+  {title:"The Digital Sunset",body:"No screens for the last 30 minutes before sleep tonight. Read, stretch, breathe. Blue light suppresses melatonin by up to 58%. Your morning edge starts with last night's sleep quality.",cta:"Set an alarm 30 min before bed. Screens off."},
+  {title:"The Movement Snack",body:"Right now: 20 air squats or a 2-minute walk. Not for fitness—for cognition. A single bout of movement increases BDNF (brain-derived neurotrophic factor) for up to 2 hours. Your brain runs better when your body moves.",cta:"20 squats or 2-minute walk. Right now."},
+  {title:"The Worry Window",body:"Schedule exactly 15 minutes today to worry on purpose. Write every fear down. Outside that window, when worry creeps in, say: 'Not now, I have a time for that.' Containment reduces anxiety more than suppression ever will.",cta:"Block 15 worry-minutes on your calendar."},
+  {title:"The 2-Minute Journal",body:"Write for exactly 2 minutes: 'Right now I feel ___ because ___.' Don't edit, don't judge. Expressive writing reduces cortisol and activates the prefrontal cortex. You're literally thinking yourself calmer.",cta:"Set a timer. Write for 2 minutes straight."},
+  {title:"The Power Posture",body:"Stand up. Feet shoulder-width apart. Hands on hips. Chin slightly up. Hold for 2 minutes. Expansive postures decrease cortisol by 25% and increase testosterone by 20%. Your body tells your brain how to feel.",cta:"2 minutes in power posture. Do it now."}
+];
+
+let state = JSON.parse(localStorage.getItem('edge_state') || 'null') || {
+  xp: 0, level: 1, streak: 0, lastDate: null, acted: [], saved: [], cardIndex: 0
+};
+
+function saveState(){ localStorage.setItem('edge_state', JSON.stringify(state)); }
+
+function checkStreak(){
+  const today = new Date().toDateString();
+  if(state.lastDate){
+    const last = new Date(state.lastDate);
+    const diff = Math.floor((new Date(today) - last) / 86400000);
+    if(diff > 1) state.streak = 0;
+  }
+}
+checkStreak();
+
+function getToday(){ return new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'}); }
+
+function getDailyCard(){
+  const dayOfYear = Math.floor((Date.now() - new Date(new Date().getFullYear(),0,0)) / 86400000);
+  return CARDS[dayOfYear % CARDS.length];
+}
+
+function renderCard(){
+  const card = getDailyCard();
+  const today = new Date().toDateString();
+  const alreadyDone = state.acted.includes(today) || state.saved.includes(today);
+  
+  if(alreadyDone){
+    document.getElementById('cardArea').innerHTML = `
+      <div class="empty">
+        <div class="icon">✅</div>
+        <h2>Today's Card Complete</h2>
+        <p>You've already engaged with today's card.<br>Come back tomorrow for your next edge.</p>
+        <p style="margin-top:20px;color:#3B82F6;font-size:18px;font-weight:700">🔥 ${state.streak} day streak</p>
+      </div>`;
+    document.getElementById('actions').style.display = 'none';
+    return;
+  }
+  
+  document.getElementById('cardArea').innerHTML = `
+    <div class="card enter" id="activeCard">
+      <div class="card-label">🏆 Today's Edge</div>
+      <div class="card-date">${getToday()}</div>
+      <h2 class="card-title">${card.title}</h2>
+      <p class="card-body">${card.body}</p>
+      <p class="card-cta">${card.cta}</p>
+    </div>`;
+  document.getElementById('actions').style.display = 'flex';
+}
+
+function updateUI(){
+  document.getElementById('streakCount').textContent = state.streak;
+  document.getElementById('levelNum').textContent = state.level;
+  const xpInLevel = state.xp % 100;
+  document.getElementById('xpCurrent').textContent = xpInLevel;
+  document.getElementById('xpNeeded').textContent = 100;
+  document.getElementById('xpFill').style.width = (xpInLevel / 100 * 100) + '%';
+}
+
+function showXP(amount){
+  const popup = document.getElementById('xpPopup');
+  popup.textContent = `XP +${amount}`;
+  popup.classList.remove('show');
+  void popup.offsetWidth;
+  popup.classList.add('show');
+}
+
+function respond(action){
+  const today = new Date().toDateString();
+  const card = document.getElementById('activeCard');
+  
+  if(action === 'act'){
+    state.xp += 10;
+    state.acted.push(today);
+    state.streak++;
+    state.lastDate = today;
+    showXP(10);
+  } else if(action === 'save'){
+    state.xp += 5;
+    state.saved.push(today);
+    state.streak++;
+    state.lastDate = today;
+    showXP(5);
+  } else {
+    state.lastDate = today;
+  }
+  
+  state.level = Math.floor(state.xp / 100) + 1;
+  saveState();
+  
+  if(card) card.classList.add('exit');
+  setTimeout(() => {
+    renderCard();
+    updateUI();
+  }, 350);
+}
+
+renderCard();
+updateUI();
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.getRegistrations().then(r => r.forEach(w => w.unregister()));
+}
+</script>
+</body>
+</html>

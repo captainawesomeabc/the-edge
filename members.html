@@ -8,36 +8,42 @@
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
     <link rel="apple-touch-icon" href="/icon-192.png">
     <style>
-        body { background-color: #000; color: #fff; font-family: 'Helvetica Neue', sans-serif; text-align: center; padding: 50px 20px; }
+        body { background-color: #0a0a1a; color: #fff; font-family: 'Helvetica Neue', sans-serif; text-align: center; padding: 50px 20px; }
         .logo { font-size: 80px; margin-bottom: 20px; }
-        h1 { font-size: 2.5rem; letter-spacing: 2px; text-transform: uppercase; color: #4A90D9; }
+        h1 { font-size: 2.5rem; letter-spacing: 2px; text-transform: uppercase; color: #3B82F6; }
         h2 { font-size: 1.5rem; color: #fff; margin-top: 40px; }
         p { font-size: 1.2rem; color: #888; max-width: 600px; margin: 20px auto; line-height: 1.6; }
-        .welcome-badge { display: inline-block; background: linear-gradient(135deg, #4A90D9, #2C5F8A); color: #fff; padding: 8px 24px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 30px; }
-        .member-card { background: #111; border: 1px solid #4A90D9; border-radius: 12px; padding: 40px 30px; max-width: 500px; margin: 40px auto; }
-        .cta-button { display: inline-block; background-color: #4A90D9; color: #fff; padding: 18px 50px; text-decoration: none; font-weight: bold; border-radius: 5px; margin-top: 30px; font-size: 1.2rem; transition: background-color 0.3s; }
-        .cta-button:hover { background-color: #5BA0E9; }
-        .divider { width: 60px; height: 2px; background: #4A90D9; margin: 30px auto; }
+        .welcome-badge { display: inline-block; background: linear-gradient(135deg, #3B82F6, #1D4ED8); color: #fff; padding: 8px 24px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 30px; }
+        .member-card { background: #141428; border: 1px solid #3B82F6; border-radius: 12px; padding: 40px 30px; max-width: 500px; margin: 40px auto; }
+        .cta-button { display: inline-block; background: linear-gradient(135deg, #3B82F6, #1D4ED8); color: #fff; padding: 18px 50px; text-decoration: none; font-weight: bold; border-radius: 5px; margin-top: 30px; font-size: 1.2rem; transition: background-color 0.3s; }
+        .cta-button:hover { background: linear-gradient(135deg, #60A5FA, #3B82F6); }
+        .divider { width: 60px; height: 2px; background: #3B82F6; margin: 30px auto; }
         .footer { margin-top: 80px; font-size: 0.8rem; color: #444; }
+        .footer a { color: rgba(59,130,246,0.6); text-decoration: none; }
     </style>
 </head>
 <body>
     <div class="logo">🏆</div>
     <div class="welcome-badge">✦ Inner Circle Member ✦</div>
     <h1>Welcome to the Hangar.</h1>
-    <p>You're in. The edge is yours. Below is your direct line to The Daily Edge — your competitive intelligence feed powered by Z-Logic.</p>
+    <p>You're in. The edge is yours. Below is your direct line to The Daily Edge Loop — your proactive mental conditioning system.</p>
 
     <div class="member-card">
-        <h2>⚡ The Daily Edge Feed</h2>
-        <p style="color: #aaa;">Your daily competitive advantage. Market signals, pattern recognition, and strategic intelligence — delivered fresh every day.</p>
+        <h2>⚡ The Daily Edge Loop</h2>
+        <p style="color: #aaa;">One card. One practice. Every day. Act on it, save it, or skip it — but show up. Your streak is your edge.</p>
         <div class="divider"></div>
-        <a href="https://tasklet.ai/agent/michael-berman-zlogic" class="cta-button" id="agent-link">LAUNCH THE DAILY EDGE</a>
-        <p style="font-size: 0.85rem; color: #555; margin-top: 20px;">Link activates with your subscription. Check back daily for fresh intelligence.</p>
+        <a href="app.html" class="cta-button">LAUNCH THE DAILY EDGE</a>
+        <p style="font-size: 0.85rem; color: #555; margin-top: 20px;">New card every day. Build your streak. Sharpen your edge.</p>
     </div>
 
     <div class="footer">
+        <a href="index.html">← Back to Home</a><br><br>
         &copy; 2026 MindWell Solution Group LLC<br>
-        <span style="color: #4A90D9;">Member Access Only</span> — Do not share this link.
+        <span style="color: #3B82F6;">Member Access Only</span> — Do not share this link.
     </div>
+
+    <script>
+    if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(r=>r.forEach(w=>w.unregister()));}
+    </script>
 </body>
 </html>
