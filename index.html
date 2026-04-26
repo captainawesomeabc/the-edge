@@ -1,60 +1,315 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THE EDGE | Proactive AI</title>
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
-    <link rel="apple-touch-icon" href="/icon-192.png">
-    <meta name="theme-color" content="#1a1a1a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="The Edge">
-    <style>
-        body { background-color: #1a1a1a; color: #fff; font-family: 'Arial', sans-serif; text-align: center; padding: 50px 20px; }
-        .logo { font-size: 80px; color: #007bff; margin-bottom: 20px; }
-        h1 { font-size: 2.5rem; color: #007bff; }
-        p { font-size: 1.2rem; max-width: 600px; margin: 20px auto; line-height: 1.6; }
-        .video-container { max-width: 640px; margin: 30px auto; position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 10px; box-shadow: 0 0 30px rgba(0, 123, 255, 0.3); }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 10px; }
-        .cta-button { display: inline-block; background-color: #007bff; color: #fff; padding: 15px 40px; text-decoration: none; font-weight: bold; border-radius: 5px; margin-top: 30px; }
-        .trial-badge { display: inline-block; background: linear-gradient(135deg, #007bff, #00b4ff); color: #fff; padding: 8px 20px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; letter-spacing: 1px; margin-bottom: 10px; }
-        .price { font-size: 1.5rem; margin: 10px 0; font-weight: bold; }
-        .footer { margin-top: 50px; color: #555; font-size: 0.8rem; }
-        .member-login { display: inline-block; margin-top: 15px; color: #007bff; text-decoration: none; font-size: 0.9rem; letter-spacing: 1px; border-bottom: 1px solid #007bff; padding-bottom: 2px; transition: opacity 0.3s; }
-        .member-login:hover { opacity: 0.7; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THE EDGE | Proactive Mental Conditioning for Athletes</title>
+<meta name="description" content="Win the 6 inches between the ears. Daily mental conditioning for elite athletes. 21 sports. 60 days. Personalized to your game.">
+<meta property="og:title" content="The Edge — Mental Conditioning for Athletes">
+<meta property="og:description" content="Less than a sports drink. More than a coach. Proactive mental conditioning for the elite athlete.">
+<meta property="og:image" content="https://theedge.guru/icon-512.png">
+<meta property="og:url" content="https://theedge.guru">
+<link rel="icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0a0a0f;color:#fff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;overflow-x:hidden;line-height:1.6}
+a{text-decoration:none}
+
+/* HERO */
+.hero{text-align:center;padding:60px 20px 40px;max-width:800px;margin:0 auto}
+.hero-icon{font-size:72px;margin-bottom:16px}
+.hero h1{font-size:clamp(32px,6vw,52px);font-weight:900;letter-spacing:-1px;background:linear-gradient(135deg,#00BFFF,#0080FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:16px}
+.hero-sub{font-size:clamp(16px,3vw,22px);color:rgba(255,255,255,0.7);max-width:620px;margin:0 auto 12px;line-height:1.5}
+.hero-tagline{font-size:18px;color:#00BFFF;font-weight:700;margin-bottom:32px}
+
+/* VIDEO */
+.video-section{max-width:720px;margin:0 auto 40px;padding:0 20px}
+.video-wrap{position:relative;padding-bottom:56.25%;height:0;border-radius:16px;overflow:hidden;box-shadow:0 8px 40px rgba(0,127,255,0.15)}
+.video-wrap iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+
+/* WHAT IS IT */
+.what-section{background:linear-gradient(180deg,rgba(0,191,255,0.03) 0%,transparent 100%);padding:60px 20px;text-align:center}
+.what-section h2{font-size:clamp(24px,4vw,36px);font-weight:800;color:#00BFFF;margin-bottom:16px}
+.what-section .desc{font-size:18px;color:rgba(255,255,255,0.8);max-width:650px;margin:0 auto 40px;line-height:1.7}
+.what-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;max-width:900px;margin:0 auto}
+.what-card{background:rgba(255,255,255,0.04);border:1px solid rgba(0,191,255,0.15);border-radius:16px;padding:32px 24px;text-align:left}
+.what-card .card-emoji{font-size:36px;margin-bottom:12px}
+.what-card h3{font-size:18px;font-weight:700;color:#00BFFF;margin-bottom:8px}
+.what-card p{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.6}
+
+/* HOW IT WORKS */
+.how-section{padding:60px 20px;text-align:center}
+.how-section h2{font-size:clamp(24px,4vw,36px);font-weight:800;color:#fff;margin-bottom:48px}
+.steps{display:flex;flex-wrap:wrap;justify-content:center;gap:32px;max-width:900px;margin:0 auto}
+.step{flex:1;min-width:240px;max-width:280px;text-align:center}
+.step-num{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#00BFFF,#0080FF);color:#fff;font-size:24px;font-weight:900;display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.step h3{font-size:18px;font-weight:700;margin-bottom:8px}
+.step p{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.5}
+.step-arrow{font-size:32px;color:#00BFFF;align-self:center;display:flex;align-items:center}
+
+/* SPORTS */
+.sports-section{background:linear-gradient(180deg,transparent,rgba(0,191,255,0.03));padding:60px 20px;text-align:center}
+.sports-section h2{font-size:clamp(24px,4vw,36px);font-weight:800;color:#00BFFF;margin-bottom:12px}
+.sports-section .sub{font-size:16px;color:rgba(255,255,255,0.5);margin-bottom:32px}
+.sports-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;max-width:750px;margin:0 auto}
+.sport-pill{background:rgba(0,191,255,0.1);border:1px solid rgba(0,191,255,0.25);border-radius:100px;padding:10px 18px;font-size:14px;font-weight:600;color:#00BFFF}
+
+/* SAMPLE CARD */
+.sample-section{padding:60px 20px;text-align:center}
+.sample-section h2{font-size:clamp(24px,4vw,36px);font-weight:800;color:#fff;margin-bottom:12px}
+.sample-section .sub{font-size:16px;color:rgba(255,255,255,0.5);margin-bottom:32px}
+.sample-card{background:linear-gradient(135deg,rgba(0,191,255,0.08),rgba(0,128,255,0.04));border:1px solid rgba(0,191,255,0.2);border-radius:20px;padding:36px 28px;max-width:500px;margin:0 auto;text-align:left}
+.sample-label{font-size:12px;text-transform:uppercase;letter-spacing:2px;color:#00BFFF;font-weight:700;margin-bottom:4px}
+.sample-date{font-size:13px;color:rgba(255,255,255,0.4);margin-bottom:16px}
+.sample-title{font-size:22px;font-weight:800;margin-bottom:12px}
+.sample-body{font-size:15px;color:rgba(255,255,255,0.75);line-height:1.7;margin-bottom:16px}
+.sample-cta{font-size:14px;font-weight:700;font-style:italic;color:#00BFFF;border-top:1px solid rgba(0,191,255,0.2);padding-top:12px}
+.sample-director{font-size:13px;color:rgba(0,191,255,0.5);margin-top:12px}
+
+/* FEATURES */
+.features-section{padding:60px 20px;text-align:center;background:rgba(255,255,255,0.02)}
+.features-section h2{font-size:clamp(24px,4vw,36px);font-weight:800;color:#00BFFF;margin-bottom:40px}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;max-width:800px;margin:0 auto}
+.feature{padding:20px;text-align:center}
+.feature .feat-icon{font-size:32px;margin-bottom:8px}
+.feature h3{font-size:15px;font-weight:700;margin-bottom:4px}
+.feature p{font-size:13px;color:rgba(255,255,255,0.5)}
+
+/* FAQ */
+.faq-section{padding:60px 20px;max-width:700px;margin:0 auto}
+.faq-section h2{font-size:clamp(24px,4vw,36px);font-weight:800;text-align:center;margin-bottom:40px}
+.faq-item{border-bottom:1px solid rgba(255,255,255,0.08);padding:20px 0}
+.faq-q{font-size:16px;font-weight:700;color:#00BFFF;margin-bottom:8px}
+.faq-a{font-size:14px;color:rgba(255,255,255,0.6);line-height:1.6}
+
+/* CTA SECTIONS */
+.cta-section{text-align:center;padding:60px 20px}
+.cta-badge{display:inline-block;background:linear-gradient(135deg,#00BFFF,#0080FF);color:#fff;font-weight:800;font-size:14px;padding:8px 24px;border-radius:100px;letter-spacing:1px;margin-bottom:16px}
+.cta-price{font-size:20px;color:rgba(255,255,255,0.7);margin-bottom:24px}
+.cta-price strong{color:#00BFFF}
+.cta-btn{display:inline-block;background:linear-gradient(135deg,#00BFFF,#0080FF);color:#fff;padding:18px 48px;font-size:18px;font-weight:800;border-radius:12px;letter-spacing:1px;text-transform:uppercase;transition:all 0.3s;box-shadow:0 4px 20px rgba(0,127,255,0.3)}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,127,255,0.4)}
+.cta-note{font-size:13px;color:rgba(255,255,255,0.35);margin-top:12px}
+
+/* FINAL CTA */
+.final-cta{background:linear-gradient(180deg,rgba(0,191,255,0.06),rgba(0,128,255,0.02));padding:80px 20px;text-align:center}
+.final-cta h2{font-size:clamp(28px,5vw,44px);font-weight:900;margin-bottom:16px;background:linear-gradient(135deg,#00BFFF,#0080FF);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.final-cta p{font-size:18px;color:rgba(255,255,255,0.6);margin-bottom:32px}
+
+/* FOOTER */
+footer{text-align:center;padding:40px 20px;border-top:1px solid rgba(255,255,255,0.06)}
+footer p{font-size:13px;color:rgba(255,255,255,0.25);margin-bottom:8px}
+footer a{color:rgba(0,191,255,0.4);font-size:13px}
+
+@media(max-width:600px){
+.steps{flex-direction:column;align-items:center}
+.step-arrow{transform:rotate(90deg)}
+}
+</style>
 </head>
 <body>
-    <div class="logo">🏆</div>
-    <h1>THE EDGE</h1>
-    <p>Less than a sports drink. More than a coach. Proactive mental conditioning for the elite athlete. Win the 6 inches between the ears.</p>
 
-    <div class="video-container">
-        <iframe src="https://www.youtube.com/embed/xxW39hyJC1M?rel=0" title="The Edge" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-icon">🏆</div>
+  <h1>WIN THE 6 INCHES BETWEEN THE EARS</h1>
+  <p class="hero-sub">Daily mental conditioning for the elite athlete. Not sports psychology textbooks. <em>Tactical edge work</em> you apply before your next practice, game, or race.</p>
+  <p class="hero-tagline">Less than a sports drink. More than a coach.</p>
+</section>
+
+<!-- VIDEO -->
+<section class="video-section">
+  <div class="video-wrap">
+    <iframe src="https://www.youtube.com/embed/xxW39hyJC1M" title="The Edge" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen loading="lazy"></iframe>
+  </div>
+</section>
+
+<!-- FIRST CTA -->
+<section class="cta-section">
+  <div class="cta-badge">🏆 5-DAY FREE TRIAL</div>
+  <p class="cta-price">Then <strong>$19.99/mo</strong> — Cancel Anytime</p>
+  <a href="app.html" class="cta-btn">START YOUR FREE TRIAL</a>
+  <p class="cta-note">No credit card required. Just tap and train.</p>
+</section>
+
+<!-- WHAT IS IT -->
+<section class="what-section">
+  <h2>YOUR DAILY MENTAL EDGE</h2>
+  <p class="desc">The Edge delivers one mental conditioning drill every morning — tailored to your sport, designed to sharpen your focus, composure, and competitive fire. This is what separates good from great.</p>
+  <div class="what-grid">
+    <div class="what-card">
+      <div class="card-emoji">🧠</div>
+      <h3>Mental Conditioning Drills</h3>
+      <p>Visualization scripts, focus triggers, pressure protocols, and composure techniques used by elite athletes. One new drill every day.</p>
     </div>
-
-    <div class="pricing">
-        <span class="trial-badge">✨ 5-DAY FREE TRIAL</span>
-        <div class="price">Then $19.99/mo — Cancel Anytime</div>
+    <div class="what-card">
+      <div class="card-emoji">🎯</div>
+      <h3>Personalized to Your Sport</h3>
+      <p>21 sports covered — basketball, running, golf, tennis, swimming, martial arts, pickleball, and more. Every drill speaks to YOUR game.</p>
     </div>
-
-    <a href="app.html" class="cta-button">START YOUR FREE TRIAL</a>
-
-    <div class="footer">
-        &copy; 2026 MindWell Solution Group LLC<br>
-        <a href="app.html" class="member-login">Member Login &rarr;</a>
+    <div class="what-card">
+      <div class="card-emoji">⚡</div>
+      <h3>Proactive AI Director</h3>
+      <p>Z-Logic's AI personalizes each session — your name, your sport, the exact moment to deploy the technique. Like having a mental coach on call.</p>
     </div>
-    <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                for (let registration of registrations) { registration.unregister(); }
-            });
-            caches.keys().then(function(names) {
-                for (let name of names) caches.delete(name);
-            });
-        }
-    </script>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section">
+  <h2>HOW IT WORKS</h2>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <h3>Open</h3>
+      <p>Every morning, open The Edge. Takes 10 seconds.</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <h3>Train Your Mind</h3>
+      <p>One card. One mental drill. Specific to your sport.</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <h3>Deploy It</h3>
+      <p>Hit ⚡ Act. Use it in practice or competition. Level up.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE CARD -->
+<section class="sample-section">
+  <h2>HERE'S A REAL SESSION</h2>
+  <p class="sub">This is what lands in your app every morning</p>
+  <div class="sample-card">
+    <div class="sample-label">🏆 Today's Edge</div>
+    <div class="sample-date">Day 8</div>
+    <div class="sample-title">The Pressure Flip</div>
+    <div class="sample-body">When the moment gets big, most athletes tighten up. Champions flip it: "This is what I trained for." Before your next high-pressure moment, say those six words. Reframe pressure as privilege. Your body follows the story your mind tells — change the story, change the performance.</div>
+    <div class="sample-cta">Before your next competition, rehearse the pressure flip 3 times.</div>
+    <div class="sample-director">🏆 🎯 Deploy this in the final set when the match is on the line.</div>
+  </div>
+</section>
+
+<!-- MID CTA -->
+<section class="cta-section">
+  <a href="app.html" class="cta-btn">TRY IT FREE FOR 5 DAYS</a>
+  <p class="cta-note">No credit card. No commitment. Just your first edge.</p>
+</section>
+
+<!-- 21 SPORTS -->
+<section class="sports-section">
+  <h2>21 SPORTS. YOUR SPORT.</h2>
+  <p class="sub">Every drill is tailored to the specific demands of your game</p>
+  <div class="sports-grid">
+    <span class="sport-pill">🏀 Basketball</span>
+    <span class="sport-pill">⚾ Baseball</span>
+    <span class="sport-pill">🏈 Football</span>
+    <span class="sport-pill">⚽ Soccer</span>
+    <span class="sport-pill">🎾 Tennis</span>
+    <span class="sport-pill">⛳ Golf</span>
+    <span class="sport-pill">🏊 Swimming</span>
+    <span class="sport-pill">🏃 Running</span>
+    <span class="sport-pill">🚴 Cycling</span>
+    <span class="sport-pill">🏐 Volleyball</span>
+    <span class="sport-pill">🤼 Wrestling</span>
+    <span class="sport-pill">🥊 Boxing</span>
+    <span class="sport-pill">🥋 Martial Arts</span>
+    <span class="sport-pill">🏒 Hockey</span>
+    <span class="sport-pill">⛷️ Skiing</span>
+    <span class="sport-pill">🏋️ Weightlifting</span>
+    <span class="sport-pill">🧘 Yoga</span>
+    <span class="sport-pill">🏄 Surfing</span>
+    <span class="sport-pill">🧗 Climbing</span>
+    <span class="sport-pill">🏓 Pickleball</span>
+    <span class="sport-pill">🏌️ General Athletics</span>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features-section">
+  <h2>EVERYTHING INSIDE</h2>
+  <div class="features-grid">
+    <div class="feature">
+      <div class="feat-icon">📅</div>
+      <h3>60 Daily Sessions</h3>
+      <p>Two months of mental edge work</p>
+    </div>
+    <div class="feature">
+      <div class="feat-icon">🔥</div>
+      <h3>Streak Tracking</h3>
+      <p>Build consistency like training</p>
+    </div>
+    <div class="feature">
+      <div class="feat-icon">📈</div>
+      <h3>XP & Levels</h3>
+      <p>Gamified progression system</p>
+    </div>
+    <div class="feature">
+      <div class="feat-icon">🎯</div>
+      <h3>Sport-Specific Cues</h3>
+      <p>AI-personalized to your game</p>
+    </div>
+    <div class="feature">
+      <div class="feat-icon">📱</div>
+      <h3>Works on Any Device</h3>
+      <p>Phone, tablet, desktop</p>
+    </div>
+    <div class="feature">
+      <div class="feat-icon">⚡</div>
+      <h3>Under 2 Minutes</h3>
+      <p>Quick session, lasting impact</p>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <h2>QUESTIONS</h2>
+  <div class="faq-item">
+    <div class="faq-q">What exactly is "mental conditioning"?</div>
+    <div class="faq-a">It's training your mind the way you train your body. Visualization, focus triggers, composure drills, pressure management — the techniques elite athletes use to perform when it matters most. One drill a day, personalized to your sport.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">How is it personalized to my sport?</div>
+    <div class="faq-a">During setup, you pick your sport from 21 options. Every session's AI director cue is tailored to your sport — a tennis player gets serve-specific triggers, a runner gets pace-management cues, a basketball player gets free-throw composure drills.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Is this for elite athletes only?</div>
+    <div class="faq-a">It's for anyone who wants to compete better — from weekend warriors to college athletes to pros. The mental game applies at every level. If you've ever choked under pressure or lost focus mid-game, this is for you.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">Do I need to download an app?</div>
+    <div class="faq-a">No app store download needed. The Edge works right in your browser on any device. Add it to your home screen for a native app experience — takes 5 seconds.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">What happens after the free trial?</div>
+    <div class="faq-a">5 days completely free — no credit card needed. After that, it's $19.99/month. Cancel anytime. Less than a sports drink a day.</div>
+  </div>
+  <div class="faq-item">
+    <div class="faq-q">How long does each session take?</div>
+    <div class="faq-a">Under 2 minutes to read. The mental rehearsal itself can be done during warm-ups, before bed, or on the way to practice. It integrates into your routine, not on top of it.</div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <h2>YOUR EDGE IS WAITING</h2>
+  <p>60 days of mental conditioning. Personalized to your sport. Starting now.</p>
+  <div class="cta-badge" style="margin-bottom:16px">🏆 5-DAY FREE TRIAL</div><br>
+  <p class="cta-price">Then <strong>$19.99/mo</strong> — Cancel Anytime</p>
+  <a href="app.html" class="cta-btn">START YOUR FREE TRIAL</a>
+  <p class="cta-note">No credit card required</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>&copy; 2026 MindWell Solution Group LLC</p>
+  <a href="app.html">Member Login →</a> · <a href="privacy.html">Privacy Policy</a>
+</footer>
+
 </body>
 </html>
