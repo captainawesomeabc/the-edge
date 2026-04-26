@@ -1,12 +1,17 @@
 {
-  "name": "The Edge – Athletic Mental Performance",
+  "name": "The Edge – Daily Athletic Mental Performance",
   "short_name": "The Edge",
-  "description": "Your daily performance reset. AI-powered mental conditioning for athletes.",
+  "description": "Your daily performance reset. AI-powered mental conditioning for athletes across 21 sports. 60-day progressive training system.",
   "start_url": "/app.html",
+  "scope": "/",
+  "id": "/app.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a1628",
   "theme_color": "#1a73e8",
+  "categories": ["sports", "health", "fitness"],
+  "lang": "en-US",
+  "dir": "ltr",
   "icons": [
     {
       "src": "/icon-192.png",
