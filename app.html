@@ -269,7 +269,7 @@
 // © 2026 MindWell Solution Group LLC
 // ===================================================================
 
-// === 20 SPORTS ===
+// === 21 SPORTS ===
 const CATEGORIES = [
   {id:"football",    label:"Football",      icon:"🏈"},
   {id:"basketball",  label:"Basketball",    icon:"🏀"},
@@ -277,6 +277,7 @@ const CATEGORIES = [
   {id:"soccer",      label:"Soccer",        icon:"⚽"},
   {id:"hockey",      label:"Hockey",        icon:"🏒"},
   {id:"tennis",      label:"Tennis",        icon:"🎾"},
+  {id:"pickleball",  label:"Pickleball",    icon:"🏓"},
   {id:"golf",        label:"Golf",          icon:"⛳"},
   {id:"swimming",    label:"Swimming",      icon:"🏊"},
   {id:"track",       label:"Track & Field", icon:"🏃"},
@@ -295,26 +296,27 @@ const CATEGORIES = [
 
 // === DIRECTOR CONTEXTS (sport-specific cues) ===
 const DIRECTOR = {
-  "football":   ["before your next snap","in the film room","during two-a-days","at your pre-game walkthrough","in the weight room","when the play breaks down"],
-  "basketball": ["before your next free throw","during the timeout huddle","in your shooting warmup","when the shot clock winds down","at practice today","during your pre-game routine"],
-  "baseball":   ["in the batter's box","before your next at-bat","on the mound","during batting practice","in the on-deck circle","between innings"],
-  "soccer":     ["before your next match","during halftime","in your pre-game warmup","when taking that penalty","during training today","when the pressure builds in extra time"],
-  "hockey":     ["before your next shift","in the locker room","during warmups","when the puck drops","in practice today","during the power play"],
-  "tennis":     ["before your next serve","between sets","during your pre-match routine","when you're down a break","at match point","during your rally"],
-  "golf":       ["on the first tee","before your next putt","during your pre-shot routine","when the pressure builds on 18","at the driving range","between holes"],
-  "swimming":   ["on the starting block","before your next race","during your warmup laps","when you hit the wall for the turn","in your dryland training","during your cooldown"],
-  "track":      ["in the starting blocks","before your next race","during your warmup","when fatigue sets in at the back straight","at practice today","in your recovery routine"],
-  "boxing":     ["before the bell rings","between rounds","during your shadowboxing","when you're against the ropes","in your morning roadwork","during sparring"],
-  "mma":        ["before you step in the cage","between rounds","during your striking drills","when you're in the clinch","in your morning training","during your sparring session"],
-  "wrestling":  ["before your next match","during your warmup","when you're in the neutral position","in the third period","during your practice room session","when the ref signals ready"],
-  "volleyball": ["before your next serve","during the timeout","in your pre-match routine","when you're rotating to serve","during your warmup","when the set is on the line"],
-  "lacrosse":   ["before faceoff","during your pre-game stick work","when you're behind the cage","in your shooting drills","during the timeout","when the clock is winding down"],
-  "rugby":      ["before kickoff","in the scrum","during halftime","when the tryline is in sight","at training today","during your lineout preparation"],
-  "gymnastics": ["before your routine","on the chalk stand","during your warmup","when you're saluting the judges","in your visualization practice","between apparatus rotations"],
-  "cycling":    ["before the race starts","during your interval training","when the hill gets steep","in your recovery spin","at the starting line","during the final sprint"],
-  "crossfit":   ["before the WOD","during your warmup","when your muscles are screaming to stop","in your skill practice","between rounds","when the clock is counting down"],
-  "rowing":     ["before the starting signal","during your warm-up strokes","when the rate is at its peak","in your steady-state training","at the catch","during your power pieces"],
-  "skiing":     ["in the starting gate","before your next run","during your course inspection","when the slope steepens","in your dry-land training","between runs"]
+  "football":    ["before your next snap","in the film room","during two-a-days","at your pre-game walkthrough","in the weight room","when the play breaks down"],
+  "basketball":  ["before your next free throw","during the timeout huddle","in your shooting warmup","when the shot clock winds down","at practice today","during your pre-game routine"],
+  "baseball":    ["in the batter's box","before your next at-bat","on the mound","during batting practice","in the on-deck circle","between innings"],
+  "soccer":      ["before your next match","during halftime","in your pre-game warmup","when taking that penalty","during training today","when the pressure builds in extra time"],
+  "hockey":      ["before your next shift","in the locker room","during warmups","when the puck drops","in practice today","during the power play"],
+  "tennis":      ["before your next serve","between sets","during your pre-match routine","when you're down a break","at match point","during your rally"],
+  "pickleball":  ["before your next serve","between games","during your pre-match warmup","when you're at the kitchen line","after a side-out","when the third-shot drop needs to be perfect"],
+  "golf":        ["on the first tee","before your next putt","during your pre-shot routine","when the pressure builds on 18","at the driving range","between holes"],
+  "swimming":    ["on the starting block","before your next race","during your warmup laps","when you hit the wall for the turn","in your dryland training","during your cooldown"],
+  "track":       ["in the starting blocks","before your next race","during your warmup","when fatigue sets in at the back straight","at practice today","in your recovery routine"],
+  "boxing":      ["before the bell rings","between rounds","during your shadowboxing","when you're against the ropes","in your morning roadwork","during sparring"],
+  "mma":         ["before you step in the cage","between rounds","during your striking drills","when you're in the clinch","in your morning training","during your sparring session"],
+  "wrestling":   ["before your next match","during your warmup","when you're in the neutral position","in the third period","during your practice room session","when the ref signals ready"],
+  "volleyball":  ["before your next serve","during the timeout","in your pre-match routine","when you're rotating to serve","during your warmup","when the set is on the line"],
+  "lacrosse":    ["before faceoff","during your pre-game stick work","when you're behind the cage","in your shooting drills","during the timeout","when the clock is winding down"],
+  "rugby":       ["before kickoff","in the scrum","during halftime","when the tryline is in sight","at training today","during your lineout preparation"],
+  "gymnastics":  ["before your routine","on the chalk stand","during your warmup","when you're saluting the judges","in your visualization practice","between apparatus rotations"],
+  "cycling":     ["before the race starts","during your interval training","when the hill gets steep","in your recovery spin","at the starting line","during the final sprint"],
+  "crossfit":    ["before the WOD","during your warmup","when your muscles are screaming to stop","in your skill practice","between rounds","when the clock is counting down"],
+  "rowing":      ["before the starting signal","during your warm-up strokes","when the rate is at its peak","in your steady-state training","at the catch","during your power pieces"],
+  "skiing":      ["in the starting gate","before your next run","during your course inspection","when the slope steepens","in your dry-land training","between runs"]
 };
 
 // === 30-DAY CONTENT MATRIX ===
