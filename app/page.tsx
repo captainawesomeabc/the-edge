@@ -1,11 +1,15 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { InputPanel } from '@/components/InputPanel';
 import { PhaseBar } from '@/components/PhaseBar';
 import { PersonaGrid } from '@/components/PersonaGrid';
 import { SynthesisReportView } from '@/components/SynthesisReport';
+import { UnlockBanner } from '@/components/UnlockBanner';
 import type { Persona, PersonaFeedback, SynthesisReport, AppPhase } from '@/types';
+
+const STRIPE_PAYMENT_LINK = 'https://buy.stripe.com/00w7sL6Eg8og0Nc44n7g404';
+const STORAGE_KEY = 'prova_unlocked';
 
 async function apiFetch(endpoint: string, body: any) {
   const res = await fetch(endpoint, {
@@ -27,7 +31,38 @@ export default function Home() {
   const [report, setReport] = useState<SynthesisReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [activeFeedbackId, setActiveFeedbackId] = useState<string | null>(null);
+  const [isPaid, setIsPaid] = useState(false);
   const abortRef = useRef(false);
+
+  // Check payment status on mount
+  useEffect(() => {
+    // Check localStorage
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored === 'true') {
+        setIsPaid(true);
+        return;
+      }
+      // Check URL param (from Stripe redirect)
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('paid') === '1') {
+        localStorage.setItem(STORAGE_KEY, 'true');
+        setIsPaid(true);
+        // Clean URL
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+  }, []);
+
+  const handleUnlock = useCallback(() => {
+    // Open Stripe payment link
+    window.open(STRIPE_PAYMENT_LINK, '_blank');
+  }, []);
+
+  const handleActivate = useCallback(() => {
+    localStorage.setItem(STORAGE_KEY, 'true');
+    setIsPaid(true);
+  }, []);
 
   const reset = useCallback(() => {
     abortRef.current = true;
@@ -91,6 +126,7 @@ export default function Home() {
   }, []);
 
   const isRunning = phase === 'building-panel' || phase === 'gathering-feedback' || phase === 'synthesizing';
+  const showUnlockBanner = !isPaid && feedbacks.length >= 2 && phase !== 'idle';
 
   return (
     <main className="min-h-screen p-4 md:p-6 max-w-3xl mx-auto space-y-5 pb-20">
@@ -104,9 +140,13 @@ export default function Home() {
         </div>
       )}
 
-      <PersonaGrid personas={personas} feedbacks={feedbacks} activeFeedbackId={activeFeedbackId} />
+      <PersonaGrid personas={personas} feedbacks={feedbacks} activeFeedbackId={activeFeedbackId} isPaid={isPaid} />
 
-      {report && <SynthesisReportView report={report} />}
+      {showUnlockBanner && (
+        <UnlockBanner onUnlock={handleUnlock} onActivate={handleActivate} />
+      )}
+
+      {report && <SynthesisReportView report={report} isPaid={isPaid} />}
 
       {(phase === 'complete' || phase === 'error') && (
         <div className="flex justify-center">

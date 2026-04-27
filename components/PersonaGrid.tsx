@@ -1,14 +1,17 @@
 'use client';
 
 import React from 'react';
-import { MapPin, Cpu, ThumbsUp, ThumbsDown, AlertTriangle, Heart } from 'lucide-react';
+import { MapPin, Cpu, ThumbsUp, ThumbsDown, AlertTriangle, Heart, Lock } from 'lucide-react';
 import type { Persona, PersonaFeedback } from '@/types';
 
 interface PersonaGridProps {
   personas: Persona[];
   feedbacks: PersonaFeedback[];
   activeFeedbackId: string | null;
+  isPaid: boolean;
 }
+
+const FREE_PERSONA_COUNT = 2;
 
 const archetypeStyles: Record<string, { bg: string; text: string }> = {
   'early adopter': { bg: 'bg-purple-500/15', text: 'text-purple-300' },
@@ -28,7 +31,7 @@ const sentimentConfig: Record<string, { emoji: string }> = {
   neutral: { emoji: '⚪' },
 };
 
-export const PersonaGrid: React.FC<PersonaGridProps> = ({ personas, feedbacks, activeFeedbackId }) => {
+export const PersonaGrid: React.FC<PersonaGridProps> = ({ personas, feedbacks, activeFeedbackId, isPaid }) => {
   if (personas.length === 0) return null;
 
   return (
@@ -47,16 +50,17 @@ export const PersonaGrid: React.FC<PersonaGridProps> = ({ personas, feedbacks, a
           const isActive = activeFeedbackId === p.id;
           const style = archetypeStyles[p.archetype] || { bg: 'bg-gray-500/15', text: 'text-gray-300' };
           const sent = fb ? sentimentConfig[fb.sentiment] || sentimentConfig.neutral : null;
+          const isLocked = !isPaid && idx >= FREE_PERSONA_COUNT && fb;
 
           return (
             <div
               key={p.id}
-              className={`edge-card rounded-xl p-4 edge-float-in ${
+              className={`edge-card rounded-xl p-4 edge-float-in relative overflow-hidden ${
                 isActive ? 'edge-card-active' : fb ? 'edge-card-done' : ''
-              }`}
+              } ${isLocked ? 'paywall-locked' : ''}`}
               style={{ animationDelay: `${idx * 0.05}s` }}
             >
-              {/* Header */}
+              {/* Header — always visible */}
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <h3 className="font-bold text-sm text-gray-200">{p.name}<span className="text-gray-500 font-normal">, {p.age}</span></h3>
@@ -66,18 +70,18 @@ export const PersonaGrid: React.FC<PersonaGridProps> = ({ personas, feedbacks, a
                   <span className={`edge-badge ${style.bg} ${style.text} px-1.5 py-0.5 rounded`}>
                     {p.archetype}
                   </span>
-                  {sent && <span className="text-sm">{sent.emoji}</span>}
+                  {sent && !isLocked && <span className="text-sm">{sent.emoji}</span>}
                 </div>
               </div>
 
-              {/* Meta */}
+              {/* Meta — always visible */}
               <div className="flex items-center gap-3 text-[0.65rem] text-gray-600 mb-2">
                 <span className="flex items-center gap-1"><MapPin size={9} /> {p.location}</span>
                 <span className="flex items-center gap-1"><Cpu size={9} /> {p.techSavvy}</span>
               </div>
 
-              {/* Feedback */}
-              {fb && (
+              {/* Feedback — blurred if locked */}
+              {fb && !isLocked && (
                 <div className="mt-2 pt-3 border-t border-gray-700/30 space-y-2">
                   <p className="text-xs text-gray-400 italic leading-relaxed">&quot;{fb.reaction}&quot;</p>
                   
@@ -104,6 +108,28 @@ export const PersonaGrid: React.FC<PersonaGridProps> = ({ personas, feedbacks, a
                         <span key={ki} className="edge-tag bg-gray-800/50 text-gray-500">{kw}</span>
                       ))}
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Locked overlay for personas 3-7 */}
+              {isLocked && (
+                <div className="paywall-blur-overlay">
+                  <div className="paywall-blur-content">
+                    <p className="text-xs text-gray-400 italic leading-relaxed">This persona had detailed feedback about your product...</p>
+                    <div className="grid grid-cols-2 gap-2 mt-2">
+                      <div className="h-3 bg-gray-700/30 rounded w-3/4"></div>
+                      <div className="h-3 bg-gray-700/30 rounded w-2/3"></div>
+                    </div>
+                    <div className="flex gap-1 mt-2">
+                      <div className="h-4 bg-gray-700/20 rounded w-16"></div>
+                      <div className="h-4 bg-gray-700/20 rounded w-12"></div>
+                      <div className="h-4 bg-gray-700/20 rounded w-20"></div>
+                    </div>
+                  </div>
+                  <div className="paywall-lock-badge">
+                    <Lock size={10} />
+                    <span>Unlock to reveal</span>
                   </div>
                 </div>
               )}
