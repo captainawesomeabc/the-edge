@@ -43,13 +43,16 @@ export default function Home() {
         setIsPaid(true);
         return;
       }
-      // Check URL param (from Stripe redirect)
+      // Check URL params (Stripe redirect or demo mode)
       const params = new URLSearchParams(window.location.search);
       if (params.get('paid') === '1') {
         localStorage.setItem(STORAGE_KEY, 'true');
         setIsPaid(true);
         // Clean URL
         window.history.replaceState({}, '', window.location.pathname);
+      }
+      if (params.get('demo') === 'true') {
+        setIsPaid(true);
       }
     }
   }, []);
