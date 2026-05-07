@@ -1,10 +1,10 @@
-[
-  {
-    "relation": ["delegate_permission/common.handle_all_urls"],
-    "target": {
-      "namespace": "android_app",
-      "package_name": "guru.theedge.app",
-      "sha256_cert_fingerprints": ["__REPLACE_WITH_YOUR_SIGNING_KEY_FINGERPRINT__"]
-    }
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "guru.theedge.twa",
+    "sha256_cert_fingerprints": [
+      "BC:06:25:0A:FF:B5:AC:9A:43:9D:69:E1:A0:08:F3:94:ED:8A:97:65:28:82:A8:7D:F5:88:CC:A6:8E:18:A0:2F"
+    ]
   }
-]
+}]
