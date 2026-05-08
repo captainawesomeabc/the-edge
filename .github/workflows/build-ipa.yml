@@ -143,3 +143,20 @@ jobs:
         name: TheEdge-iOS
         path: ${{ runner.temp }}/export/*.ipa
         retention-days: 7
+
+    - name: Upload to TestFlight
+      env:
+        ASC_API_KEY_P8: ${{ secrets.ASC_API_KEY_P8 }}
+        ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+        ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      run: |
+        mkdir -p ~/.appstoreconnect/private_keys
+        echo "$ASC_API_KEY_P8" | base64 --decode > ~/.appstoreconnect/private_keys/AuthKey_${ASC_KEY_ID}.p8
+        IPA_PATH=$(find $RUNNER_TEMP/export -name "*.ipa" | head -1)
+        echo "Uploading IPA: $IPA_PATH"
+        xcrun altool --upload-app \
+          --type ios \
+          --file "$IPA_PATH" \
+          --apiKey "$ASC_KEY_ID" \
+          --apiIssuer "$ASC_ISSUER_ID" \
+          --verbose
