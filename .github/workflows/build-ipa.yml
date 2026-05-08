@@ -7,17 +7,15 @@ on:
 
 jobs:
   build:
-    runs-on: macos-14
+    runs-on: macos-15
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Select Xcode
+    - name: Select Xcode 16.2
       run: |
-        # Use latest available Xcode on this runner
-        sudo xcode-select -p || true
-        ls /Applications/Xcode*.app 2>/dev/null | tail -1 | xargs -I{} sudo xcode-select -s {} || true
+        sudo xcode-select -s /Applications/Xcode_16.2.app
         xcodebuild -version
 
     - name: Import signing certificate
@@ -35,6 +33,10 @@ jobs:
           -P "$CERTIFICATE_PASSWORD" \
           -A -t cert -f pkcs12 \
           -k $KEYCHAIN_PATH
+        security set-key-partition-list \
+          -S apple-tool:,apple: \
+          -s -k "$KEYCHAIN_PASSWORD" \
+          $KEYCHAIN_PATH
         security list-keychain -d user -s $KEYCHAIN_PATH
         echo "Certificate imported:"
         security find-identity -v -p codesigning
@@ -70,8 +72,8 @@ jobs:
           IPHONEOS_DEPLOYMENT_TARGET=15.0 \
           SWIFT_VERSION=5.0 \
           ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS=NO \
-          EXCLUDED_ARCHS__EFFECTIVE_PLATFORM_SUFFIX_simulator__NATIVE_ARCH_64_BIT_x86_64=i386 \
-          -allowProvisioningUpdates 2>&1
+          ASSETCATALOG_COMPILER_SKIP_APP_STORE_DEPLOYMENT=YES \
+          -allowProvisioningUpdates
 
     - name: Export IPA
       env:
