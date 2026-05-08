@@ -8,7 +8,7 @@ on:
 jobs:
   build:
     runs-on: macos-15
-    
+
     steps:
     - name: Checkout
       uses: actions/checkout@v4
@@ -26,13 +26,14 @@ jobs:
         security create-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
         security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
         security unlock-keychain -p "$KEYCHAIN_PASSWORD" $KEYCHAIN_PATH
-        
         echo "$CERTIFICATE_BASE64" | base64 --decode > $RUNNER_TEMP/certificate.p12
         security import $RUNNER_TEMP/certificate.p12 \
           -P "$CERTIFICATE_PASSWORD" \
           -A -t cert -f pkcs12 \
           -k $KEYCHAIN_PATH
         security list-keychain -d user -s $KEYCHAIN_PATH
+        echo "Certificate imported:"
+        security find-identity -v -p codesigning
 
     - name: Install provisioning profile
       env:
@@ -43,31 +44,32 @@ jobs:
         mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
         UUID=$(security cms -D -i $PP_PATH | plutil -extract UUID xml1 -o - - | sed -n 's/.*<string>\(.*\)<\/string>.*/\1/p')
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/$UUID.mobileprovision
-        echo "Installed profile: $UUID"
+        echo "Installed profile UUID: $UUID"
         echo "PROFILE_UUID=$UUID" >> $GITHUB_ENV
 
-    - name: Get Team ID from certificate
-      run: |
-        TEAM_ID=$(security find-identity -v -p codesigning | grep "iPhone Distribution\|Apple Distribution" | head -1 | awk '{print $3}' | tr -d '"' | awk -F'(' '{print $2}' | tr -d ')')
-        echo "TEAM_ID=$TEAM_ID" >> $GITHUB_ENV
-        echo "Found Team ID: $TEAM_ID"
-
     - name: Build archive
+      env:
+        TEAM_ID: ${{ secrets.APP_STORE_CONNECT_TEAM_ID }}
       run: |
         cd ios
         xcodebuild archive \
           -project TheEdge.xcodeproj \
           -scheme TheEdge \
+          -sdk iphoneos \
           -configuration Release \
           -destination "generic/platform=iOS" \
           -archivePath $RUNNER_TEMP/TheEdge.xcarchive \
           CODE_SIGN_STYLE=Manual \
-          DEVELOPMENT_TEAM=${{ env.TEAM_ID }} \
+          DEVELOPMENT_TEAM=$TEAM_ID \
           PROVISIONING_PROFILE=${{ env.PROFILE_UUID }} \
           CODE_SIGN_IDENTITY="iPhone Distribution" \
-          -allowProvisioningUpdates
+          IPHONEOS_DEPLOYMENT_TARGET=15.0 \
+          SWIFT_VERSION=5.0 \
+          -allowProvisioningUpdates 2>&1 | tail -50
 
     - name: Export IPA
+      env:
+        TEAM_ID: ${{ secrets.APP_STORE_CONNECT_TEAM_ID }}
       run: |
         cat > $RUNNER_TEMP/ExportOptions.plist << PLISTEOF
         <?xml version="1.0" encoding="UTF-8"?>
@@ -77,7 +79,7 @@ jobs:
           <key>method</key>
           <string>app-store-connect</string>
           <key>teamID</key>
-          <string>${{ env.TEAM_ID }}</string>
+          <string>$TEAM_ID</string>
           <key>provisioningProfiles</key>
           <dict>
             <key>guru.theedge.app</key>
@@ -94,7 +96,7 @@ jobs:
         </dict>
         </plist>
         PLISTEOF
-        
+
         xcodebuild -exportArchive \
           -archivePath $RUNNER_TEMP/TheEdge.xcarchive \
           -exportOptionsPlist $RUNNER_TEMP/ExportOptions.plist \
