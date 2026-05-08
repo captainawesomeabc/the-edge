@@ -7,14 +7,18 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-14
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
     - name: Select Xcode
-      run: sudo xcode-select -s /Applications/Xcode_16.2.app
+      run: |
+        # Use latest available Xcode on this runner
+        sudo xcode-select -p || true
+        ls /Applications/Xcode*.app 2>/dev/null | tail -1 | xargs -I{} sudo xcode-select -s {} || true
+        xcodebuild -version
 
     - name: Import signing certificate
       env:
@@ -65,7 +69,9 @@ jobs:
           CODE_SIGN_IDENTITY="iPhone Distribution" \
           IPHONEOS_DEPLOYMENT_TARGET=15.0 \
           SWIFT_VERSION=5.0 \
-          -allowProvisioningUpdates 2>&1 | tail -50
+          ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS=NO \
+          EXCLUDED_ARCHS__EFFECTIVE_PLATFORM_SUFFIX_simulator__NATIVE_ARCH_64_BIT_x86_64=i386 \
+          -allowProvisioningUpdates 2>&1
 
     - name: Export IPA
       env:
