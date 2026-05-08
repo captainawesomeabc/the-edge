@@ -10,6 +10,7 @@
 		B001000100000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A001000100000001 /* AppDelegate.swift */; };
 		B001000200000002 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A001000200000002 /* SceneDelegate.swift */; };
 		B001000300000003 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A001000300000003 /* ViewController.swift */; };
+		B001000400000004 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A001000400000004 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -17,6 +18,7 @@
 		A001000100000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A001000200000002 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		A001000300000003 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A001000400000004 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A001000500000005 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -45,6 +47,7 @@
 				A001000100000001 /* AppDelegate.swift */,
 				A001000200000002 /* SceneDelegate.swift */,
 				A001000300000003 /* ViewController.swift */,
+				A001000400000004 /* Assets.xcassets */,
 				A001000500000005 /* Info.plist */,
 			);
 			path = TheEdge;
@@ -116,6 +119,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B001000400000004 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
