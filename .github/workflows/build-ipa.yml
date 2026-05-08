@@ -7,15 +7,19 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-latest
 
     steps:
     - name: Checkout
       uses: actions/checkout@v4
 
-    - name: Select Xcode 16.2
+    - name: Select latest Xcode
       run: |
-        sudo xcode-select -s /Applications/Xcode_16.2.app
+        echo "Available Xcode versions:"
+        ls /Applications/ | grep -E "^Xcode" | sort -V
+        LATEST=$(ls /Applications/ | grep -E "^Xcode_[0-9]" | sort -V | tail -1 | sed 's/\.app//')
+        echo "Selecting: $LATEST"
+        sudo xcode-select -s /Applications/${LATEST}.app
         xcodebuild -version
 
     - name: Import signing certificate
@@ -52,33 +56,6 @@ jobs:
         cp $PP_PATH ~/Library/MobileDevice/Provisioning\ Profiles/$UUID.mobileprovision
         echo "Installed profile UUID: $UUID"
         echo "PROFILE_UUID=$UUID" >> $GITHUB_ENV
-
-    - name: Create iOS 16.2 stub runtime (actool fix)
-      run: |
-        # actool requires iOS 16.2 runtime (DVTBuildVersion 22C146) but runner doesn't have it
-        # Create a stub to satisfy actool's validation check
-        RUNTIME_DIR="$HOME/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS 16.2.simruntime"
-        mkdir -p "$RUNTIME_DIR/Contents"
-        cat > "$RUNTIME_DIR/Contents/Info.plist" << 'PLIST'
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-        <plist version="1.0">
-        <dict>
-            <key>DVTBuildVersion</key>
-            <string>22C146</string>
-            <key>CFBundleName</key>
-            <string>iOS 16.2</string>
-            <key>CFBundleIdentifier</key>
-            <string>com.apple.CoreSimulator.SimRuntime.iOS-16-2</string>
-            <key>CFBundleVersion</key>
-            <string>1</string>
-            <key>CFBundleShortVersionString</key>
-            <string>16.2</string>
-        </dict>
-        </plist>
-        PLIST
-        echo "Stub runtime created:"
-        ls "$RUNTIME_DIR/Contents/"
 
     - name: Build archive
       env:
