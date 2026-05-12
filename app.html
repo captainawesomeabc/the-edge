@@ -697,23 +697,36 @@ body{padding-top:44px!important}
 (function(){
   const TRIAL_DAYS = 5;
   const KEY = 'the_edge_trial_start';
-  
+  // Detect iOS WKWebView (no Safari token in UA) or any iOS device
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  // Allow ?preview_expired=1 for App Review testing
+  const previewExpired = new URLSearchParams(window.location.search).get('preview_expired') === '1';
+
   // Set trial start on first visit
   if(!localStorage.getItem(KEY)){
     localStorage.setItem(KEY, new Date().toISOString());
   }
-  
-  const start = new Date(localStorage.getItem(KEY));
+
+  const trialStart = previewExpired ? new Date(0) : new Date(localStorage.getItem(KEY));
   const now = new Date();
-  const elapsed = Math.floor((now - start) / (1000*60*60*24));
+  const elapsed = Math.floor((now - trialStart) / (1000*60*60*24));
   const remaining = Math.max(0, TRIAL_DAYS - elapsed);
   const banner = document.getElementById('trial-banner');
   const paywall = document.getElementById('paywall-overlay');
-  
+
   if(remaining > 0){
     banner.innerHTML = '🏆 FREE TRIAL — <span class="days">' + remaining + ' day' + (remaining!==1?'s':'') + ' remaining</span>';
   } else {
-    banner.innerHTML = '🏆 TRIAL ENDED — <a href="https://buy.stripe.com/eVqeVe5SfbcI80G8zJfjG03" style="color:#fff;text-decoration:underline;font-weight:800">Subscribe to continue</a>';
+    if(isIOS){
+      // Apple compliance: no pricing or external payment links in iOS apps (App Store Guidelines 3.1.2)
+      banner.innerHTML = '🏆 TRIAL ENDED — Visit theedge.guru to subscribe';
+      document.querySelector('.pw-price').style.display = 'none';
+      document.querySelector('.pw-btn').style.display = 'none';
+      document.querySelector('.pw-sub').innerHTML = 'Your free trial has ended. To continue your training, visit <strong>theedge.guru</strong> on the web to manage your subscription.';
+      document.querySelector('.pw-cancel').textContent = 'Continue exploring →';
+    } else {
+      banner.innerHTML = '🏆 TRIAL ENDED — <a href="https://buy.stripe.com/eVqeVe5SfbcI80G8zJfjG03" style="color:#fff;text-decoration:underline;font-weight:800">Subscribe to continue</a>';
+    }
     paywall.classList.add('active');
   }
 })();
