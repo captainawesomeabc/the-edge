@@ -718,12 +718,12 @@ body{padding-top:44px!important}
     banner.innerHTML = '🏆 FREE TRIAL — <span class="days">' + remaining + ' day' + (remaining!==1?'s':'') + ' remaining</span>';
   } else {
     if(isIOS){
-      // Apple compliance: no pricing or external payment links in iOS apps (App Store Guidelines 3.1.2)
-      banner.innerHTML = '🏆 TRIAL ENDED — Visit theedge.guru to subscribe';
+      // Apple 3.1.3(a) Reader App compliance: no pricing, no external links, no payment CTAs
+      banner.innerHTML = '🏆 THE EDGE — Subscription required';
       document.querySelector('.pw-price').style.display = 'none';
       document.querySelector('.pw-btn').style.display = 'none';
-      document.querySelector('.pw-sub').innerHTML = 'Your free trial has ended. To continue your training, visit <strong>theedge.guru</strong> on the web to manage your subscription.';
-      document.querySelector('.pw-cancel').textContent = 'Continue exploring →';
+      document.querySelector('.pw-sub').innerHTML = 'Your free trial has ended. An active subscription is required to access The Edge.';
+      document.querySelector('.pw-cancel').textContent = 'Continue →';
     } else {
       banner.innerHTML = '🏆 TRIAL ENDED — <a href="https://buy.stripe.com/eVqeVe5SfbcI80G8zJfjG03" style="color:#fff;text-decoration:underline;font-weight:800">Subscribe to continue</a>';
     }
