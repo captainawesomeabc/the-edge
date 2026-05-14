@@ -676,8 +676,9 @@ if('serviceWorker' in navigator){
 .pw-title{font-size:28px;font-weight:800;color:#fff;margin-bottom:12px;text-align:center}
 .pw-sub{font-size:16px;color:rgba(255,255,255,0.7);max-width:400px;text-align:center;line-height:1.6;margin-bottom:30px}
 .pw-price{font-size:20px;color:#00BFFF;font-weight:700;margin-bottom:8px}
-.pw-btn{display:inline-block;background:linear-gradient(135deg,#00BFFF,#0080FF);color:#fff;padding:18px 50px;text-decoration:none;font-weight:800;border-radius:12px;font-size:18px;letter-spacing:1px;text-transform:uppercase;transition:all 0.3s;box-shadow:0 4px 20px rgba(0,0,0,0.3)}
+.pw-btn{display:inline-block;background:linear-gradient(135deg,#00BFFF,#0080FF);color:#fff;padding:18px 50px;text-decoration:none;font-weight:800;border-radius:12px;font-size:18px;letter-spacing:1px;text-transform:uppercase;transition:all 0.3s;box-shadow:0 4px 20px rgba(0,0,0,0.3);cursor:pointer;border:none}
 .pw-btn:hover{transform:scale(1.05);box-shadow:0 6px 30px rgba(0,0,0,0.4)}
+.pw-restore{font-size:13px;color:rgba(0,191,255,0.8);margin-top:14px;cursor:pointer;text-decoration:underline}
 .pw-cancel{font-size:13px;color:rgba(255,255,255,0.4);margin-top:16px;cursor:pointer}
 body{padding-top:44px!important}
 </style>
@@ -687,9 +688,10 @@ body{padding-top:44px!important}
 <div id="paywall-overlay">
   <div class="pw-emoji">🏆</div>
   <div class="pw-title">Your Free Trial Has Ended</div>
-  <div class="pw-sub">You've experienced 5 days of The Edge. Ready to keep going? Unlock all 60 days of game-changing content.</div>
-  <div class="pw-price">$9.99/month</div>
-  <a href="https://buy.stripe.com/eVqeVe5SfbcI80G8zJfjG03" class="pw-btn">SUBSCRIBE NOW</a>
+  <div class="pw-sub" id="pw-sub-text">You've experienced 5 days of The Edge. Ready to keep going? Unlock all 60 days of game-changing content.</div>
+  <div class="pw-price" id="pw-price-text">$9.99/month</div>
+  <button class="pw-btn" id="pw-action-btn" onclick="handleSubscribeClick()">SUBSCRIBE NOW</button>
+  <div class="pw-restore" id="pw-restore-btn" style="display:none" onclick="handleRestoreClick()">Restore Purchase</div>
   <div class="pw-cancel" onclick="document.getElementById('paywall-overlay').classList.remove('active')">Maybe later</div>
 </div>
 
@@ -697,38 +699,80 @@ body{padding-top:44px!important}
 (function(){
   const TRIAL_DAYS = 5;
   const KEY = 'the_edge_trial_start';
-  // Detect iOS WKWebView (no Safari token in UA) or any iOS device
-  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-  // Allow ?preview_expired=1 for App Review testing
-  const previewExpired = new URLSearchParams(window.location.search).get('preview_expired') === '1';
 
-  // Set trial start on first visit
-  if(!localStorage.getItem(KEY)){
-    localStorage.setItem(KEY, new Date().toISOString());
+  // True ONLY when running inside the iOS native wrapper (WKWebView with StoreKit bridge)
+  function isIOSNativeApp() {
+    return !!(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.purchaseSubscription);
   }
 
-  const trialStart = previewExpired ? new Date(0) : new Date(localStorage.getItem(KEY));
-  const now = new Date();
-  const elapsed = Math.floor((now - trialStart) / (1000*60*60*24));
-  const remaining = Math.max(0, TRIAL_DAYS - elapsed);
-  const banner = document.getElementById('trial-banner');
-  const paywall = document.getElementById('paywall-overlay');
+  // Called by iOS Swift via evaluateJavaScript after checking entitlements
+  window.nativeSubscriptionActive = undefined;
 
-  if(remaining > 0){
-    banner.innerHTML = '🏆 FREE TRIAL — <span class="days">' + remaining + ' day' + (remaining!==1?'s':'') + ' remaining</span>';
-  } else {
-    if(isIOS){
-      // Apple 3.1.3(a) Reader App compliance: no pricing, no external links, no payment CTAs
-      banner.innerHTML = '🏆 THE EDGE — Subscription required';
-      document.querySelector('.pw-price').style.display = 'none';
-      document.querySelector('.pw-btn').style.display = 'none';
-      document.querySelector('.pw-sub').innerHTML = 'Your free trial has ended. An active subscription is required to access The Edge.';
-      document.querySelector('.pw-cancel').textContent = 'Continue →';
+  window.handleSubscribeClick = function() {
+    if (isIOSNativeApp()) {
+      window.webkit.messageHandlers.purchaseSubscription.postMessage({});
     } else {
-      banner.innerHTML = '🏆 TRIAL ENDED — <a href="https://buy.stripe.com/eVqeVe5SfbcI80G8zJfjG03" style="color:#fff;text-decoration:underline;font-weight:800">Subscribe to continue</a>';
+      window.location.href = 'https://buy.stripe.com/eVqeVe5SfbcI80G8zJfjG03';
     }
-    paywall.classList.add('active');
+  };
+
+  window.handleRestoreClick = function() {
+    if (isIOSNativeApp()) {
+      window.webkit.messageHandlers.restoreSubscription.postMessage({});
+    }
+  };
+
+  function runTrialGate() {
+    // If iOS native and Apple subscription is active → unlock immediately
+    if (isIOSNativeApp() && window.nativeSubscriptionActive === true) {
+      document.getElementById('trial-banner').style.display = 'none';
+      document.getElementById('paywall-overlay').classList.remove('active');
+      return;
+    }
+
+    // On iOS native but Swift hasn't injected status yet → wait for event
+    if (isIOSNativeApp() && window.nativeSubscriptionActive === undefined) {
+      return;
+    }
+
+    // Allow ?preview_expired=1 for App Review testing
+    const previewExpired = new URLSearchParams(window.location.search).get('preview_expired') === '1';
+
+    if (!localStorage.getItem(KEY)) {
+      localStorage.setItem(KEY, new Date().toISOString());
+    }
+
+    const trialStart = previewExpired ? new Date(0) : new Date(localStorage.getItem(KEY));
+    const now = new Date();
+    const elapsed = Math.floor((now - trialStart) / (1000*60*60*24));
+    const remaining = Math.max(0, TRIAL_DAYS - elapsed);
+    const banner = document.getElementById('trial-banner');
+    const paywall = document.getElementById('paywall-overlay');
+
+    if (remaining > 0) {
+      banner.innerHTML = '🏆 FREE TRIAL — <span class="days">' + remaining + ' day' + (remaining!==1?'s':'') + ' remaining</span>';
+    } else {
+      if (isIOSNativeApp()) {
+        // iOS native: show Apple IAP paywall (no Stripe, no pricing text, no external URLs)
+        banner.innerHTML = '🏆 THE EDGE — Subscription required';
+        document.getElementById('pw-price-text').style.display = 'none';
+        document.getElementById('pw-action-btn').textContent = 'UNLOCK WITH APPLE';
+        document.getElementById('pw-sub-text').innerHTML = 'Your free trial has ended. Subscribe via Apple to keep your Edge.';
+        document.getElementById('pw-restore-btn').style.display = 'block';
+        document.querySelector('.pw-cancel').style.display = 'none';
+      } else {
+        // Web / Android: Stripe flow
+        banner.innerHTML = '🏆 TRIAL ENDED — <a href="https://buy.stripe.com/eVqeVe5SfbcI80G8zJfjG03" style="color:#fff;text-decoration:underline;font-weight:800">Subscribe to continue</a>';
+      }
+      paywall.classList.add('active');
+    }
   }
+
+  // Swift calls this after injecting nativeSubscriptionActive
+  window.addEventListener('nativeSubscriptionUpdated', runTrialGate);
+
+  // Run immediately — handles web/Android and cases where status is already set
+  runTrialGate();
 })();
 </script>
 <!-- END TRIAL GATING -->
