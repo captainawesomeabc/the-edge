@@ -10,6 +10,7 @@
 		B001000100000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A001000100000001 /* AppDelegate.swift */; };
 		B001000200000002 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A001000200000002 /* SceneDelegate.swift */; };
 		B001000300000003 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A001000300000003 /* ViewController.swift */; };
+		B001000700000007 /* SubscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A001000700000007 /* SubscriptionManager.swift */; };
 		B001000400000004 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A001000400000004 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -335,3 +336,4 @@
 	};
 	rootObject = F000000000000000 /* Project object */;
 }
+
