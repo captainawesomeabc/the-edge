@@ -248,7 +248,12 @@
       <div class="profile-section-title">Last 28 Days</div>
       <div class="streak-calendar" id="streakCalendar"></div>
     </div>
-    <button class="back-btn" onclick="showDaily()">← Back to Daily Loop</button>
+    <div class="profile-section" id="subscription-section">
+      <div class="profile-section-title">Subscription</div>
+      <button class="back-btn" style="background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:#fff;border:1px solid transparent;margin-top:0" onclick="showSubscribeFromProfile()">⚡ Subscribe to Premium</button>
+      <button class="back-btn" style="margin-top:10px;font-size:13px;color:rgba(255,255,255,0.5)" onclick="handleRestoreClick()">Restore Purchase</button>
+    </div>
+        <button class="back-btn" onclick="showDaily()">← Back to Daily Loop</button>
     <button class="reset-btn" onclick="resetProfile()">Reset Profile</button>
   </div>
   <div class="footer">© 2026 MindWell Solution Group LLC</div>
@@ -697,7 +702,7 @@ body{padding-top:44px!important}
 
 <script>
 (function(){
-  const TRIAL_DAYS = 5;
+  const TRIAL_DAYS = 7;
   const KEY = 'the_edge_trial_start';
 
   // True ONLY when running inside the iOS native wrapper (WKWebView with StoreKit bridge)
@@ -769,6 +774,23 @@ body{padding-top:44px!important}
   }
 
   // Swift calls this after injecting nativeSubscriptionActive
+
+  window.showSubscribeFromProfile = function() {
+    // Show the paywall overlay (and configure for iOS native if applicable)
+    var paywall = document.getElementById('paywall-overlay');
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.purchaseSubscription) {
+      document.getElementById('pw-price-text').style.display = 'none';
+      var btn = document.getElementById('pw-action-btn');
+      if (btn) btn.textContent = 'UNLOCK WITH APPLE';
+      var sub = document.getElementById('pw-sub-text');
+      if (sub) sub.innerHTML = 'Subscribe via Apple to unlock all 60 days of mental conditioning content.';
+      var restore = document.getElementById('pw-restore-btn');
+      if (restore) restore.style.display = 'block';
+      var cancel = document.querySelector('.pw-cancel');
+      if (cancel) cancel.style.display = 'block';
+    }
+    paywall.classList.add('active');
+  };
   window.addEventListener('nativeSubscriptionUpdated', runTrialGate);
 
   // Run immediately — handles web/Android and cases where status is already set
