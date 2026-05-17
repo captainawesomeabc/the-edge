@@ -797,6 +797,15 @@ body{padding-top:44px!important}
   // Run immediately — handles web/Android and cases where status is already set
   runTrialGate();
 })();
+
+  // Open policy links: native Safari on iOS, new tab on web
+  window.openPolicyLink = function(url) {
+    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.openURL) {
+      window.webkit.messageHandlers.openURL.postMessage(url);
+    } else {
+      window.open(url, '_blank');
+    }
+  };
 </script>
 <!-- END TRIAL GATING -->
 
