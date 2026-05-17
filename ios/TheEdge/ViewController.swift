@@ -18,6 +18,7 @@ class ViewController: UIViewController {
         let contentController = config.userContentController
         contentController.add(self, name: "purchaseSubscription")
         contentController.add(self, name: "restoreSubscription")
+        contentController.add(self, name: "openURL")
 
         webView = WKWebView(frame: view.bounds, configuration: config)
         webView.autoresizingMask = [.flexibleWidth, .flexibleHeight]
@@ -84,6 +85,12 @@ class ViewController: UIViewController {
             }
         }
     }
+
+    /// Open external URL in Safari (used for Privacy Policy and Terms of Use links)
+    private func openExternalURL(_ urlString: String) {
+        guard let url = URL(string: urlString) else { return }
+        UIApplication.shared.open(url, options: [:], completionHandler: nil)
+    }
 }
 
 extension ViewController: WKNavigationDelegate {
@@ -91,6 +98,20 @@ extension ViewController: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         // Inject subscription status as soon as page finishes loading
         injectSubscriptionStatus()
+    }
+
+    /// Open external links in Safari instead of navigating within the WebView
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
+                 decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        if let url = navigationAction.request.url,
+           navigationAction.navigationType == .linkActivated,
+           let host = url.host,
+           !host.contains("theedge.guru") {
+            UIApplication.shared.open(url, options: [:], completionHandler: nil)
+            decisionHandler(.cancel)
+        } else {
+            decisionHandler(.allow)
+        }
     }
 
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
@@ -123,6 +144,10 @@ extension ViewController: WKScriptMessageHandler {
             triggerNativePurchase()
         case "restoreSubscription":
             triggerRestore()
+        case "openURL":
+            if let urlString = message.body as? String {
+                openExternalURL(urlString)
+            }
         default:
             break
         }
