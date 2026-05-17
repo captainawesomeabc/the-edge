@@ -693,7 +693,7 @@ body{padding-top:44px!important}
 <div id="paywall-overlay">
   <div class="pw-emoji">🏆</div>
   <div class="pw-title">Your Free Trial Has Ended</div>
-  <div class="pw-sub" id="pw-sub-text">You've experienced 5 days of The Edge. Ready to keep going? Unlock all 60 days of game-changing content.</div>
+  <div class="pw-sub" id="pw-sub-text">Your 7-day free trial has ended. Subscribe to keep your competitive edge and unlock the full 60-day mental conditioning program.</div>
   <div class="pw-price" id="pw-price-text">$9.99/month</div>
   <button class="pw-btn" id="pw-action-btn" onclick="handleSubscribeClick()">SUBSCRIBE NOW</button>
   <div class="pw-restore" id="pw-restore-btn" style="display:none" onclick="handleRestoreClick()">Restore Purchase</div>
@@ -758,11 +758,12 @@ body{padding-top:44px!important}
       banner.innerHTML = '🏆 FREE TRIAL — <span class="days">' + remaining + ' day' + (remaining!==1?'s':'') + ' remaining</span>';
     } else {
       if (isIOSNativeApp()) {
-        // iOS native: show Apple IAP paywall (no Stripe, no pricing text, no external URLs)
+        // iOS native: show Apple IAP paywall with required 3.1.2(c) disclosures
         banner.innerHTML = '🏆 THE EDGE — Subscription required';
-        document.getElementById('pw-price-text').style.display = 'none';
-        document.getElementById('pw-action-btn').textContent = 'UNLOCK WITH APPLE';
-        document.getElementById('pw-sub-text').innerHTML = 'Your free trial has ended. Subscribe via Apple to keep your Edge.';
+        document.getElementById('pw-price-text').style.display = 'block';
+        document.getElementById('pw-price-text').innerHTML = '<strong>The Edge Premium</strong><br>Monthly · $19.99/month<br><small style="font-size:13px;opacity:0.8">Includes 1-week free trial · Auto-renews monthly · Cancel anytime</small>';
+        document.getElementById('pw-action-btn').textContent = 'START FREE TRIAL';
+        document.getElementById('pw-sub-text').innerHTML = 'Unlock unlimited access to AI-powered mental conditioning for all 21 sports — including the full 60-day program, sport-specific coaching, and daily mindset training.<br><br><span style=\'font-size:12px;opacity:0.7\'>By subscribing you agree to our <a href=\"#\" onclick=\"openPolicyLink(\'https://theedge.guru/privacy.html\');return false;\" style=\"color:#60A5FA;text-decoration:underline\">Privacy Policy</a> and <a href=\"#\" onclick=\"openPolicyLink(\'https://theedge.guru/terms.html\');return false;\" style=\"color:#60A5FA;text-decoration:underline\">Terms of Use</a>.</span>';
         document.getElementById('pw-restore-btn').style.display = 'block';
         document.querySelector('.pw-cancel').style.display = 'none';
       } else {
