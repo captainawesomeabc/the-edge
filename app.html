@@ -692,10 +692,16 @@ body{padding-top:44px!important}
 
 <div id="paywall-overlay">
   <div class="pw-emoji">🏆</div>
-  <div class="pw-title">Your Free Trial Has Ended</div>
-  <div class="pw-sub" id="pw-sub-text">Your 7-day free trial has ended. Subscribe to keep your competitive edge and unlock the full 60-day mental conditioning program.</div>
-  <div class="pw-price" id="pw-price-text">$9.99/month</div>
-  <button class="pw-btn" id="pw-action-btn" onclick="handleSubscribeClick()">SUBSCRIBE NOW</button>
+  <div class="pw-title">THE EDGE Premium</div>
+  <div class="pw-sub" id="pw-sub-text">Unlock unlimited AI-powered mental conditioning for all 21 sports:<br>
+&#8226; Complete 60-day mental conditioning program<br>
+&#8226; Sport-specific AI coaching (pickleball, golf, tennis &amp; more)<br>
+&#8226; Game-day preparation &amp; pressure management<br>
+&#8226; Daily mindset training &amp; confidence building<br>
+&#8226; Focus, composure &amp; clutch performance modules<br><br>
+<span style="font-size:12px;opacity:0.7">By subscribing you agree to our <a href="#" onclick="openPolicyLink('https://theedge.guru/privacy.html');return false;" style="color:#60A5FA;text-decoration:underline">Privacy Policy</a> and <a href="#" onclick="openPolicyLink('https://theedge.guru/terms.html');return false;" style="color:#60A5FA;text-decoration:underline">Terms of Use</a>.</span></div>
+  <div class="pw-price" id="pw-price-text"><strong>The Edge Premium Monthly</strong><br><span style="font-size:20px;color:#00BFFF;font-weight:700">$19.99/month</span><br><small style="font-size:13px;opacity:0.8">7-day free trial &bull; Auto-renews monthly &bull; Cancel anytime</small></div>
+  <button class="pw-btn" id="pw-action-btn" onclick="handleSubscribeClick()">START FREE TRIAL</button>
   <div class="pw-restore" id="pw-restore-btn" style="display:none" onclick="handleRestoreClick()">Restore Purchase</div>
   <div class="pw-cancel" onclick="document.getElementById('paywall-overlay').classList.remove('active')">Maybe later</div>
 </div>
