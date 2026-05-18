@@ -777,14 +777,31 @@ body{padding-top:44px!important}
   // Swift calls this after injecting nativeSubscriptionActive
 
   window.showSubscribeFromProfile = function() {
-    // Show the paywall overlay (and configure for iOS native if applicable)
+    // Show the paywall overlay with full 3.1.2(c) required disclosures
     var paywall = document.getElementById('paywall-overlay');
     if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.purchaseSubscription) {
-      document.getElementById('pw-price-text').style.display = 'none';
+      // Show full subscription disclosure: name, duration, price, features, links
+      var priceEl = document.getElementById('pw-price-text');
+      if (priceEl) {
+        priceEl.style.display = 'block';
+        priceEl.innerHTML = '<strong style="font-size:17px">The Edge Premium</strong><br>' +
+          '<span style="font-size:15px">Monthly Auto-Renewable Subscription</span><br>' +
+          '<span style="font-size:20px;color:#00BFFF;font-weight:700">$19.99/month</span><br>' +
+          '<span style="font-size:12px;opacity:0.75">7-day free trial, then $19.99/month · Cancel anytime</span>';
+      }
       var btn = document.getElementById('pw-action-btn');
-      if (btn) btn.textContent = 'UNLOCK WITH APPLE';
+      if (btn) btn.textContent = 'START FREE TRIAL';
       var sub = document.getElementById('pw-sub-text');
-      if (sub) sub.innerHTML = 'Subscribe via Apple to unlock all 60 days of mental conditioning content.';
+      if (sub) sub.innerHTML = 'Unlock full access to AI-powered mental conditioning for all 21 sports:<br>' +
+        '&#8226; Complete 60-day mental conditioning program<br>' +
+        '&#8226; Sport-specific AI coaching (pickleball, golf, tennis &amp; more)<br>' +
+        '&#8226; Game-day preparation &amp; pressure management<br>' +
+        '&#8226; Daily mindset training &amp; confidence building<br>' +
+        '&#8226; Focus, composure &amp; clutch performance modules<br><br>' +
+        '<span style="font-size:12px;opacity:0.7">By subscribing you agree to our ' +
+        '<a href="#" onclick="openPolicyLink('https://theedge.guru/privacy.html');return false;" style="color:#60A5FA;text-decoration:underline">Privacy Policy</a>' +
+        ' and <a href="#" onclick="openPolicyLink('https://theedge.guru/terms.html');return false;" style="color:#60A5FA;text-decoration:underline">Terms of Use</a>.' +
+        '</span>';
       var restore = document.getElementById('pw-restore-btn');
       if (restore) restore.style.display = 'block';
       var cancel = document.querySelector('.pw-cancel');
