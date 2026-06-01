@@ -701,7 +701,7 @@ body{padding-top:44px!important}
 &#8226; Focus, composure &amp; clutch performance modules<br><br>
 <span style="font-size:12px;opacity:0.7">By subscribing you agree to our <a href="#" onclick="openPolicyLink('https://theedge.guru/privacy.html');return false;" style="color:#60A5FA;text-decoration:underline">Privacy Policy</a> and <a href="#" onclick="openPolicyLink('https://theedge.guru/terms.html');return false;" style="color:#60A5FA;text-decoration:underline">Terms of Use</a>.</span></div>
   <div class="pw-price" id="pw-price-text"><strong>The Edge Premium Monthly</strong><br><span style="font-size:20px;color:#00BFFF;font-weight:700">$19.99/month</span><br><small style="font-size:13px;opacity:0.8">7-day free trial &bull; Auto-renews monthly &bull; Cancel anytime</small></div>
-  <button class="pw-btn" id="pw-action-btn" onclick="(function(){try{if(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.purchaseSubscription){window.webkit.messageHandlers.purchaseSubscription.postMessage({});}else{window.location.href='https://buy.stripe.com/eVqeVe5SfbcI80G8zJfjG03';}}catch(e){try{window.webkit.messageHandlers.purchaseSubscription.postMessage('purchase');}catch(e2){}}})()">START FREE TRIAL</button>
+  <button class="pw-btn" id="pw-action-btn" onclick="(function(){if(typeof window.webkit!=='undefined'){window.location.href='theedge://purchase';}else{window.location.href='https://buy.stripe.com/eVqeVe5SfbcI80G8zJfjG03';}})()">START FREE TRIAL</button>
   <div class="pw-restore" id="pw-restore-btn" style="display:none" onclick="handleRestoreClick()">Restore Purchase</div>
   <div class="pw-cancel" onclick="document.getElementById('paywall-overlay').classList.remove('active')">Maybe later</div>
 </div>
@@ -719,13 +719,11 @@ body{padding-top:44px!important}
     }catch(e){}
   }
   function triggerPurchase(){
-    try{
-      if(window.webkit&&window.webkit.messageHandlers&&window.webkit.messageHandlers.purchaseSubscription){
-        window.webkit.messageHandlers.purchaseSubscription.postMessage({});
-      }else{
-        window.location.href='https://buy.stripe.com/eVqeVe5SfbcI80G8zJfjG03';
-      }
-    }catch(e){}
+    if(typeof window.webkit!=='undefined'){
+      window.location.href='theedge://purchase';
+    }else{
+      window.location.href='https://buy.stripe.com/eVqeVe5SfbcI80G8zJfjG03';
+    }
   }
   document.addEventListener('DOMContentLoaded',function(){
     /* Find profile subscribe button by text and add touchstart */
@@ -751,33 +749,24 @@ body{padding-top:44px!important}
 
   // True ONLY when running inside the iOS native wrapper (WKWebView with StoreKit bridge)
   function isIOSNativeApp() {
-    return !!(window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.purchaseSubscription);
+    return typeof window.webkit !== 'undefined';
   }
 
   // Called by iOS Swift via evaluateJavaScript after checking entitlements
   window.nativeSubscriptionActive = undefined;
 
   window.handleSubscribeClick = function() {
-    try {
-      if (isIOSNativeApp()) {
-        window.webkit.messageHandlers.purchaseSubscription.postMessage({});
-      } else {
-        window.location.href = 'https://buy.stripe.com/eVqeVe5SfbcI80G8zJfjG03';
-      }
-    } catch(e) {
-      console.error('handleSubscribeClick error:', e);
-      // Attempt direct postMessage as fallback
-      try {
-        window.webkit.messageHandlers.purchaseSubscription.postMessage('purchase');
-      } catch(e2) {
-        console.error('Fallback also failed:', e2);
-      }
+    if (isIOSNativeApp()) {
+      // URL scheme navigation — reliable on all iPadOS versions
+      window.location.href = 'theedge://purchase';
+    } else {
+      window.location.href = 'https://buy.stripe.com/eVqeVe5SfbcI80G8zJfjG03';
     }
   };
 
   window.handleRestoreClick = function() {
     if (isIOSNativeApp()) {
-      window.webkit.messageHandlers.restoreSubscription.postMessage({});
+      window.location.href = 'theedge://restore';
     }
   };
 
@@ -835,7 +824,7 @@ body{padding-top:44px!important}
     try {
     var paywall = document.getElementById('paywall-overlay');
     if (!paywall) { console.error('paywall-overlay not found'); return; }
-    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.purchaseSubscription) {
+    if (typeof window.webkit !== 'undefined') {
       // Show full subscription disclosure: name, duration, price, features, links
       var priceEl = document.getElementById('pw-price-text');
       if (priceEl) {
@@ -877,8 +866,9 @@ body{padding-top:44px!important}
 
   // Open policy links: native Safari on iOS, new tab on web
   window.openPolicyLink = function(url) {
-    if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.openURL) {
-      window.webkit.messageHandlers.openURL.postMessage(url);
+    if (typeof window.webkit !== 'undefined') {
+      // Use URL scheme navigation — works on all iPadOS versions unlike messageHandlers
+      window.location.href = 'theedge://open?url=' + encodeURIComponent(url);
     } else {
       window.open(url, '_blank');
     }
