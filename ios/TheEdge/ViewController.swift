@@ -10,7 +10,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Register JS→native message handlers
+        // Register JS→native message handlers (kept as secondary fallback)
         let config = WKWebViewConfiguration()
         config.allowsInlineMediaPlayback = true
         config.mediaTypesRequiringUserActionForPlayback = []
@@ -100,22 +100,53 @@ extension ViewController: WKNavigationDelegate {
         injectSubscriptionStatus()
     }
 
-    /// Open external links in Safari instead of navigating within the WebView
+    /// Handle navigation actions — intercept theedge:// URL scheme + open external links in Safari
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction,
                  decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        if let url = navigationAction.request.url,
-           navigationAction.navigationType == .linkActivated,
-           let host = url.host,
-           !host.contains("theedge.guru") {
-            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-            decisionHandler(.cancel)
-        } else {
-            decisionHandler(.allow)
+        if let url = navigationAction.request.url {
+
+            // PRIMARY: Handle custom theedge:// URL scheme
+            // This replaces WKScriptMessageHandler which is unreliable on some iPadOS versions
+            if url.scheme == "theedge" {
+                switch url.host {
+                case "purchase":
+                    triggerNativePurchase()
+                case "restore":
+                    triggerRestore()
+                case "open":
+                    if let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
+                       let urlParam = components.queryItems?.first(where: { $0.name == "url" })?.value {
+                        openExternalURL(urlParam)
+                    }
+                default:
+                    break
+                }
+                decisionHandler(.cancel)
+                return
+            }
+
+            // SECONDARY: Open external non-theedge.guru links in Safari
+            if navigationAction.navigationType == .linkActivated,
+               let host = url.host,
+               !host.contains("theedge.guru") {
+                UIApplication.shared.open(url, options: [:], completionHandler: nil)
+                decisionHandler(.cancel)
+                return
+            }
         }
+        decisionHandler(.allow)
     }
 
     func webView(_ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
                  withError error: Error) {
+        // Ignore theedge:// scheme "failures" — these are intentional URL scheme navigations
+        let nsError = error as NSError
+        if nsError.domain == NSURLErrorDomain,
+           let failingURL = nsError.userInfo[NSURLErrorFailingURLStringErrorKey] as? String,
+           failingURL.hasPrefix("theedge://") {
+            return
+        }
+
         let html = """
         <html>
         <body style="background:#000;color:#FFD700;font-family:sans-serif;
@@ -139,6 +170,7 @@ extension ViewController: WKScriptMessageHandler {
 
     func userContentController(_ userContentController: WKUserContentController,
                                 didReceive message: WKScriptMessage) {
+        // Fallback: handle messageHandlers if they fire (older iOS versions)
         switch message.name {
         case "purchaseSubscription":
             triggerNativePurchase()
