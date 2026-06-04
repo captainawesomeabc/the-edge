@@ -1,0 +1,30 @@
+workflows:
+  android-play-store:
+    name: TheEdge Android Play Store
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      java: 17
+      groups:
+        - play_store_credentials
+      vars:
+        PACKAGE_NAME: "guru.theedge.app"
+    scripts:
+      - name: Build AAB
+        script: |
+          cd android
+          chmod +x gradlew 2>/dev/null || true
+          ./gradlew bundleRelease
+      - name: Sign AAB
+        script: |
+          # Google Play App Signing handles the release key
+          # Upload key is managed via Codemagic env vars
+          echo "AAB built — Google Play App Signing will re-sign on upload"
+    artifacts:
+      - android/app/build/outputs/bundle/release/*.aab
+      - android/app/build/outputs/mapping/release/mapping.txt
+    publishing:
+      google_play:
+        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+        track: internal
+        submit_as_draft: true
