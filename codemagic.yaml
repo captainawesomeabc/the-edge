@@ -68,26 +68,31 @@ workflows:
     max_build_duration: 60
     instance_type: linux_x2
     environment:
-      android_signing:
-        - the_edge_keystore
       java: 17
     scripts:
-      - name: Install Gradle
+      - name: Install Gradle and set up signing
         script: |
           cd $CM_BUILD_DIR/android
+          # Download Gradle 8.6
           echo "Downloading Gradle 8.6..."
           curl -sL https://services.gradle.org/distributions/gradle-8.6-bin.zip -o /tmp/gradle-dist.zip
           unzip -q /tmp/gradle-dist.zip -d /tmp/
-          echo "Generating Gradle wrapper..."
+          # Generate proper Gradle wrapper
           /tmp/gradle-8.6/bin/gradle wrapper --gradle-version 8.6
           chmod +x gradlew
-          echo "Gradle wrapper ready"
+          # Decode upload keystore
+          echo "MIIKxAIBAzCCCm4GCSqGSIb3DQEHAaCCCl8EggpbMIIKVzCCBa4GCSqGSIb3DQEHAaCCBZ8EggWbMIIFlzCCBZMGCyqGSIb3DQEMCgECoIIFQDCCBTwwZgYJKoZIhvcNAQUNMFkwOAYJKoZIhvcNAQUMMCsEFIdP1fH79m+VG+fkJ11lwrmVA/tXAgInEAIBIDAMBggqhkiG9w0CCQUAMB0GCWCGSAFlAwQBKgQQbzrL+ZxWzIKdu3sTo8fzCQSCBNADOsr8gd7Fc9yBfPY6nugCxLNT8aqYviyuwX4y8MxyJnFXIJDkrg230YLEfiPfl8mZrKsY8oNj4R3WLcluKrOIdEJJR9V++N1FnOseM/vuQ+Axkg48mtQljjaP3JvRW4IlY9gAqnG03PwNNBHvZ8q4dAGBhQslD8JDhia89mxj+kOIKlUG/7EPOXzuPh0O4Dfz6s5Bhn7JfNwmCxFdIihreHLm6Zs7JisSpLAHtCOKINGTm5W3BTHh1F8e3W2ZVnHr67dqPOQFxcrUciW0pTgXeb3jwXWlvoaHdnqVMQ7S7WcRxD471sucaVVPBdhrLop0taRsWLx/R4vopOAKOBePpezTXqgtZOfRT+5DJVF/EdB2Gr3PK3/2hy4yeN31ubsQZpsYxzqKH2sbAsLV5f2HDPTqhKuaw8kSmqXElBKLZWA9BdPcjX8xuglwvdsbhnYSbePQudcYk03g31f0tl3K8+M8iCuPJHMKHvnQ7FXAHHDOZo87lWDo0ldImmaJsM5SO7AL6oVC8l5pXbIaUPU+1VeODXr1FwN0GgIe3pomGJ2XuBQYAdXz/XeF3E39IcxWkrmmvMWTZu7H1qsXq47wtvOJhbjv/2iPRSAfC0FZHijKzoZIIC/APLxfeBH+fO68pTSg+WY4ii+uLCd1Dqb7zYnQI9671a2ArVKCOA4fjgSGPCRGFDo23I40EE7RRTfxTQQMcnhGFSRD0Cqef5L/DRoZaAdKimsIOGRE9ozSbRU7N8UXAd6w1DdnqpZznhJBMxWayUgzdcCH/vKtY8eDGafB15eBIB9W7XyV4s+kAn0eC3/pBXs2PLlRcgA3JtTvr0hA7QSfwalcfjS5N8OHQpaYNetn23jqHTmrz5nymT0wJrMqZZb+vwE3TK3pwQupA59MYeFC/x/6zUVdji9OzK/+OfZKAGczGLVpsT7n7H0IKAKPXv4lXFiLmOF0VU5424qapYNAlgfL1r1dtrDEWDrxJ/Y3mRARfOfTbwZ0Q4wiB0lgl2qb31Dk4XM6HNnMcEwnNHOHNnYRA4f2XFh5z25HMaDqJhWKO5Lks1pMzVzgAHemxrUrBq80zQEqnS6huySr9/DpBGVZ56RsA1bk0bs14dFNUPA5PrUJZp/fnLalVHbWsLi+8YnaN478Y1WBNFBSQ62UToh0kArDfnKIjj/LgytoZdHMtyENJWL+vasycisoeBOGwZ+7ECOneCux4osE5FsTE8KXdSoSFWfl3A8WoY+eSn4QahonuZ2nge9YNB9krPW6FEkP8ankw2kN6638nKcdp+iHheFc9ozcf3FEBk4aF/k4V1ncvv2PxUrxKC9gy6zA9/I3Y7WOQPLFDcpi+Yd73Poa5pjnmFTSjq8JKvZahnTyL9Z1i8zkiUc9GDqkKUsu9AWITyUJhQabv3lcYgYADPX6HELtJOwCwSD5zBAgBuqANGQxvRzzj8CIZmtJxB0p/DXnQz+QgDJJb0JOwUnmPd5RvXnY1SlDlm8hEckhAifQugcC65gfv3LtMo37ZB4F8efCFShumDNQtMqCYlLCMtmKMyfvIk0O1u/uwJcfOlG/T7mTneWlMCn1BapmLLjJph50ij4eY0zYmUpkqyRxINSa1YjQSDrx3lmRkn5wsDcUekOYb5bNYzFAMBsGCSqGSIb3DQEJFDEOHgwAdQBwAGwAbwBhAGQwIQYJKoZIhvcNAQkVMRQEElRpbWUgMTc4MDU4MjY0Mjc4MTCCBKEGCSqGSIb3DQEHBqCCBJIwggSOAgEAMIIEhwYJKoZIhvcNAQcBMGYGCSqGSIb3DQEFDTBZMDgGCSqGSIb3DQEFDDArBBRbbk8oemV9A3o/n44Djz+Q14K31wICJxACASAwDAYIKoZIhvcNAgkFADAdBglghkgBZQMEASoEEOLnOhX/9Fy1k3wc3syyEOaAggQQ6cXdyBcsboV/vJyW5SX8I9qGpPRFuGksbE/J1xSsKv92rbF5UbriZ3jkoOMFVOmFIwklz+8FZwRU7+YG1TXhwWVOj4c0CvDMdOfRzEWgZQj8dDiFUjor8N7jKbUXIYXVmC/zq1OeHnyYd1C43XRt0CGyn7Tr2tXLB6dl8fi2MkOuHFIEKAamn/4FMJHC/jHI5R0bF4JdbV9S5mq9eKH4lgz5YeulG2Y44cMk9yl5ro9qwNOA8PYJrUBP7Oz/YGv8tcLcUNoVOAKnsEIvzvvHg9a1R17vwuj7GszDw+0r+KnM0T9ZnPLiiz+XKibyWJJ+g2ZDUm672NSdk1EVUvQZaClOZqb55AWKl57Z/izB19YKVJt1zxXbd0s4LLWmU/z43RVr1DtYSvF7w9UVP4cWYk8eyiLKEKoxzFq8ec6MsEcQFEaXnKp3TwgijHkUkwJ0/X8gwsiEFvTerBtX+EA7EU4Kb3fIlMZKWVsivUJzSbs6O0Y5xuQu75Wl8rzX02d54k22yk4KzkNvNI6ueBW4yBvZ4Q2f8lp1nHonaiy0VXDpPdKRjNKQjTtM7muyS/qMenve5ev7uUdFHgPyJ+t3GBuCKmSnp6ji62dN2UapMwxu2Y2jdQdJ69zP/x5gwsqB4EjENN2ekkNxS6mu8+ffbnnkF5oDj7u+z+3bwY3y/dWPt1iYy4kPwKrnZ6oEV1iuXLOmY2tOtNA6xJBJtmaX6gJENdGbaorOJyekpYjcyf1nU5zGp2nWW9yJbvJgUAwzvC7xGICh27lmOn2vKYfViN2LqvETEwjAr7nl53HuvjqJTzdQ6kc+1oC0kVEcJYQviydLqm+Qx0vhTB59dizhK2EpUsr7Q6apIdupzzBTE8zQvQzY5l+6zi1nZf+HSzda/p8362+s31uowb5D4Y7D+rtI3nEFjKxeccQPX37hncnrR5Jl4IEz1G5ApTMZ0k7xW4V4wGktEXLZU/C6p3x3pAHdaMWRpPf9xjd/8I9W1b+pqSNmDO3AfmSEa2cnCBTjzKohABQg4Q/nh8980DzMDztuYXTKTgTvDRnO9MT0eX2IcxiTOv88g3iyy2zzax9eiam5/fEuuFDTZd4fawScqCP6us613P/bNdCymQW12+da1w1jZtQo8MLX1JP0ouQ3zerbeC34/ZYvjw9hz/gdQiHhHHbRC3KBhEFIMIUr0cDPVxDznkhkds7WzuP6VIom6JxbbmYgi4E6Y/lxbQGDUFpq+Lc+im+qTo6w+zk4G4vEwtxAscddxLdlsXJ0U8R+4iNsASDlazGz5ZS/hJqFutby2SF96w2uC6MUqmrKUpbTgpXq1MAHNb8UT5V1CsKnLwmIOXQR7W4O8guMYZfU5tUwMJuPgeuhKUDX7F0JFTgwTTAxMA0GCWCGSAFlAwQCAQUABCDI8jQPsHx7Q2tcmUe23Ak7mCJPid6eoyqV8Kd+KGmUMQQUNDCUbbM+yGhR9/msGcT26PJZihQCAicQ" | base64 -d > app/upload-keystore.jks
+          echo "Keystore decoded: $(ls -la app/upload-keystore.jks)"
+          # Set env vars for Gradle
+          echo "CM_KEYSTORE_PATH=$CM_BUILD_DIR/android/app/upload-keystore.jks" >> $CM_ENV
+          echo "CM_KEYSTORE_PASSWORD=TheEdge2026Upload" >> $CM_ENV
+          echo "CM_KEY_ALIAS=upload" >> $CM_ENV
+          echo "CM_KEY_PASSWORD=TheEdge2026Upload" >> $CM_ENV
       - name: Build AAB
         script: |
           cd $CM_BUILD_DIR/android
-          echo "Signing config:"
-          echo "  CM_KEYSTORE_PATH=$CM_KEYSTORE_PATH"
-          echo "  CM_KEY_ALIAS=$CM_KEY_ALIAS"
+          echo "Building release AAB..."
+          echo "Keystore: $CM_KEYSTORE_PATH"
           ./gradlew bundleRelease
           echo "Build complete. AAB files:"
           find . -name "*.aab" -type f -ls
