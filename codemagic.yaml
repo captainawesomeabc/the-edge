@@ -2,111 +2,62 @@ workflows:
   ios-app-store:
     name: TheEdge iOS App Store
     max_build_duration: 60
+    instance_type: mac_mini_m2
     integrations:
       app_store_connect: Codemagic-Prova-Build
     environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: guru.theedge.app
       groups:
         - app_store_credentials
       vars:
-        BUNDLE_ID: "guru.theedge.app"
+        XCODE_WORKSPACE: "TheEdge.xcodeproj/project.xcworkspace"
         XCODE_SCHEME: "TheEdge"
-        XCODE_PROJECT: "TheEdge.xcodeproj"
-      xcode: latest
+        BUNDLE_ID: "guru.theedge.app"
+      xcode: 16.2
       cocoapods: default
     scripts:
       - name: Set up code signing
         script: |
           keychain initialize
-          app-store-connect fetch-signing-files "$BUNDLE_ID" \
-            --type IOS_APP_STORE \
-            --certificate-key=@env:CERTIFICATE_PRIVATE_KEY \
-            --create
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
           keychain add-certificates
-          xcode-project use-profiles
-      - name: Fix signing identity
-        script: |
-          IDENTITY=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -1 | sed 's/.*"\(.*\)"/\1/')
-          if [ -z "$IDENTITY" ]; then
-            IDENTITY=$(security find-identity -v -p codesigning | grep "Distribution" | head -1 | sed 's/.*"\(.*\)"/\1/')
-          fi
-          echo "Using signing identity: $IDENTITY"
-          
-          PROFILE_PATH=$(ls ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision 2>/dev/null | head -1)
-          if [ -n "$PROFILE_PATH" ]; then
-            PROFILE_UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" /dev/stdin <<< $(security cms -D -i "$PROFILE_PATH"))
-            echo "Using profile UUID: $PROFILE_UUID"
-          fi
-          
-          sed -i '' "s/iPhone Distribution/Apple Distribution/g" "$CM_BUILD_DIR/$XCODE_PROJECT/project.pbxproj"
-          sed -i '' "s/iOS Distribution/Apple Distribution/g" "$CM_BUILD_DIR/$XCODE_PROJECT/project.pbxproj"
       - name: Build IPA
         script: |
-          IDENTITY=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -1 | sed 's/.*"\(.*\)"/\1/')
-          if [ -z "$IDENTITY" ]; then
-            IDENTITY=$(security find-identity -v -p codesigning | grep "Distribution" | head -1 | sed 's/.*"\(.*\)"/\1/')
-          fi
-          
-          PROFILE_UUID=""
-          for f in ~/Library/MobileDevice/Provisioning\ Profiles/*.mobileprovision; do
-            UUID=$(/usr/libexec/PlistBuddy -c "Print UUID" /dev/stdin <<< $(security cms -D -i "$f") 2>/dev/null)
-            if [ -n "$UUID" ]; then
-              PROFILE_UUID=$UUID
-              break
-            fi
-          done
-          
-          echo "=== Building with identity: $IDENTITY ==="
-          echo "=== Profile UUID: $PROFILE_UUID ==="
-          
+          SIGNING_IDENTITY=$(security find-identity -v -p codesigning | grep "Apple Distribution" | head -1 | awk -F'"' '{print $2}')
+          echo "Using identity: $SIGNING_IDENTITY"
           xcodebuild archive \
-            -project "$CM_BUILD_DIR/$XCODE_PROJECT" \
-            -scheme "$XCODE_SCHEME" \
-            -archivePath "$CM_BUILD_DIR/build/TheEdge.xcarchive" \
+            -project TheEdge.xcodeproj \
+            -scheme TheEdge \
+            -archivePath build/TheEdge.xcarchive \
             -destination "generic/platform=iOS" \
-            CODE_SIGN_IDENTITY="$IDENTITY" \
-            PROVISIONING_PROFILE_SPECIFIER="$PROFILE_UUID" \
+            CODE_SIGN_IDENTITY="$SIGNING_IDENTITY" \
             CODE_SIGN_STYLE=Manual \
-            DEVELOPMENT_TEAM=L4YN74FXDS \
-            PRODUCT_BUNDLE_IDENTIFIER=guru.theedge.app \
-            CURRENT_PROJECT_VERSION=5 \
-            MARKETING_VERSION=1.0 \
-            -allowProvisioningUpdates 2>&1 | tee /tmp/xcodebuild_archive.log
-          
-          cat > /tmp/export_options.plist << PLIST
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            -allowProvisioningUpdates
+          cat > build/ExportOptions.plist << 'PLIST'
           <?xml version="1.0" encoding="UTF-8"?>
           <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
           <plist version="1.0">
           <dict>
-            <key>method</key>
-            <string>app-store</string>
-            <key>teamID</key>
-            <string>L4YN74FXDS</string>
-            <key>signingStyle</key>
-            <string>manual</string>
-            <key>provisioningProfiles</key>
-            <dict>
-              <key>guru.theedge.app</key>
-              <string>$PROFILE_UUID</string>
-            </dict>
-            <key>signingCertificate</key>
-            <string>$IDENTITY</string>
-            <key>uploadSymbols</key>
-            <true/>
-            <key>uploadBitcode</key>
-            <false/>
+              <key>method</key>
+              <string>app-store</string>
+              <key>teamID</key>
+              <string>L4YN74FXDS</string>
+              <key>uploadSymbols</key>
+              <true/>
+              <key>signingStyle</key>
+              <string>manual</string>
           </dict>
           </plist>
           PLIST
-          
           xcodebuild -exportArchive \
-            -archivePath "$CM_BUILD_DIR/build/TheEdge.xcarchive" \
-            -exportOptionsPlist /tmp/export_options.plist \
-            -exportPath "$CM_BUILD_DIR/build/ios/ipa" \
-            -allowProvisioningUpdates 2>&1 | tee /tmp/xcodebuild_export.log
+            -archivePath build/TheEdge.xcarchive \
+            -exportOptionsPlist build/ExportOptions.plist \
+            -exportPath build/ipa
     artifacts:
-      - build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_*.log
-      - $HOME/Library/Developer/Xcode/DerivedData/**/Build/**/*.dSYM
+      - build/ipa/*.ipa
     publishing:
       app_store_connect:
         auth: integration
@@ -115,22 +66,30 @@ workflows:
   android-play-store:
     name: TheEdge Android Play Store
     max_build_duration: 60
-    instance_type: mac_mini_m2
+    instance_type: linux_x2
     environment:
+      android_signing:
+        - the_edge_keystore
       java: 17
-      vars:
-        PACKAGE_NAME: "guru.theedge.twa"
     scripts:
-      - name: Set up Android SDK
+      - name: Install Gradle
         script: |
-          # Accept licenses
-          yes | sdkmanager --licenses 2>/dev/null || true
+          cd $CM_BUILD_DIR/android
+          echo "Downloading Gradle 8.6..."
+          curl -sL https://services.gradle.org/distributions/gradle-8.6-bin.zip -o /tmp/gradle-dist.zip
+          unzip -q /tmp/gradle-dist.zip -d /tmp/
+          echo "Generating Gradle wrapper..."
+          /tmp/gradle-8.6/bin/gradle wrapper --gradle-version 8.6
+          chmod +x gradlew
+          echo "Gradle wrapper ready"
       - name: Build AAB
         script: |
           cd $CM_BUILD_DIR/android
-          chmod +x gradlew
-          ./gradlew bundleRelease 2>&1 | tee /tmp/gradle_build.log
+          echo "Signing config:"
+          echo "  CM_KEYSTORE_PATH=$CM_KEYSTORE_PATH"
+          echo "  CM_KEY_ALIAS=$CM_KEY_ALIAS"
+          ./gradlew bundleRelease
+          echo "Build complete. AAB files:"
+          find . -name "*.aab" -type f -ls
     artifacts:
       - android/app/build/outputs/bundle/release/*.aab
-      - android/app/build/outputs/mapping/release/mapping.txt
-      - /tmp/gradle_build.log
