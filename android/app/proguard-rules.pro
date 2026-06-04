@@ -1,0 +1,2 @@
+-keep class guru.theedge.app.** { *; }
+-keep class com.android.vending.billing.** { *; }
