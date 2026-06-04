@@ -1,4 +1,4 @@
-package guru.theedge.app
+package guru.theedge.twa
 
 import android.annotation.SuppressLint
 import android.content.Intent

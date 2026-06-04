@@ -1,4 +1,4 @@
-package guru.theedge.app
+package guru.theedge.twa
 
 import android.app.Activity
 import android.util.Log

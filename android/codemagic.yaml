@@ -8,7 +8,7 @@ workflows:
       groups:
         - play_store_credentials
       vars:
-        PACKAGE_NAME: "guru.theedge.app"
+        PACKAGE_NAME: "guru.theedge.twa"
     scripts:
       - name: Build AAB
         script: |

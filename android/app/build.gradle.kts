@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "guru.theedge.app"
+    namespace = "guru.theedge.twa"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "guru.theedge.app"
+        applicationId = "guru.theedge.twa"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
