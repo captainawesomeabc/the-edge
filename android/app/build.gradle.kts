@@ -5,14 +5,14 @@ plugins {
 
 android {
     namespace = "guru.theedge.twa"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "guru.theedge.twa"
         minSdk = 24
-        targetSdk = 34
-        versionCode = 3
-        versionName = "1.1"
+        targetSdk = 35
+        versionCode = 4
+        versionName = "1.2"
     }
 
     signingConfigs {
