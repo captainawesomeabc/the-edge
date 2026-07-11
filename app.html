@@ -28,7 +28,7 @@
   .profile-btn:hover{background:rgba(59,130,246,0.3)}
 
   .xp-bar-container{padding:12px 20px;background:rgba(59,130,246,0.05)}
-  .xp-label{font-size:12px;color:#3B82F6;margin-bottom:4px;display:flex;justify-content:space-between}
+  .xp-label{font-size:12px;color:#3B82F6;margin-bottom:4px;display:flex;justify-content:space-between}.xp-info{font-size:11px;color:rgba(255,255,255,0.35);margin-top:3px;line-height:1.4}
   .xp-bar{height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden}
   .xp-fill{height:100%;background:linear-gradient(90deg,#3B82F6,#60A5FA);border-radius:3px;transition:width 0.6s cubic-bezier(0.4,0,0.2,1)}
 
@@ -195,6 +195,7 @@
       <span><span id="xpCurrent">0</span> / <span id="xpNeeded">100</span> XP</span>
     </div>
     <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+    <div class="xp-info">Complete today&#39;s card to earn XP · Level up to unlock new challenges &amp; badges</div>
   </div>
   <div class="card-area" id="cardArea"></div>
   <div class="actions" id="actions">
@@ -516,6 +517,21 @@ function renderCard(){
         <h2>Today's Card Complete</h2>
         <p>You've already engaged with today's card.<br>Come back tomorrow for your next edge.</p>
         <p style="margin-top:20px;color:#3B82F6;font-size:18px;font-weight:700">🔥 ${state.streak} day streak</p>
+        <div style="margin-top:28px;display:flex;flex-direction:column;gap:12px;text-align:left">
+          <p style="font-size:13px;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px">While you wait…</p>
+          <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:14px 16px;cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+            <div style="font-weight:600;color:#60A5FA;font-size:14px">📔 Journal Prompt</div>
+            <div style="display:none;margin-top:8px;font-size:14px;color:rgba(255,255,255,0.75);line-height:1.5">What is one mental habit you want to break this week? Write 3 sentences about it.</div>
+          </div>
+          <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:14px 16px;cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+            <div style="font-weight:600;color:#60A5FA;font-size:14px">🧘 2-Minute Reset</div>
+            <div style="display:none;margin-top:8px;font-size:14px;color:rgba(255,255,255,0.75);line-height:1.5">Breathe in for 4 counts · Hold for 4 · Out for 4 · Repeat 5×. Use this before high-pressure moments.</div>
+          </div>
+          <div style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);border-radius:10px;padding:14px 16px;cursor:pointer" onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none'">
+            <div style="font-weight:600;color:#60A5FA;font-size:14px">🏆 Review Past Cards</div>
+            <div style="display:none;margin-top:8px;font-size:14px;color:rgba(255,255,255,0.75);line-height:1.5">Tap the History tab to review and reflect on your previous Edge cards.</div>
+          </div>
+        </div>
       </div>`;
     document.getElementById('actions').style.display = 'none';
     return;
