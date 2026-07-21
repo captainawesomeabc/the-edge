@@ -7,7 +7,8 @@ import kotlinx.coroutines.*
 
 /**
  * Manages Google Play Billing for The Edge subscription.
- * Product ID: guru.theedge.monthly ($19.99/mo with 5-day free trial)
+ * Product ID: guru.theedge.monthly ($19.99/mo with 7-day free trial)
+ * Updated for Billing Library v8.0.0+
  */
 class BillingManager(private val activity: MainActivity) : PurchasesUpdatedListener {
 
@@ -20,7 +21,12 @@ class BillingManager(private val activity: MainActivity) : PurchasesUpdatedListe
 
     private val billingClient: BillingClient = BillingClient.newBuilder(activity)
         .setListener(this)
-        .enablePendingPurchases()
+        .enablePendingPurchases(
+            PendingPurchasesParams.newBuilder()
+                .enableOneTimeProducts()
+                .enablePrepaidPlans()
+                .build()
+        )
         .build()
 
     var isSubscribed = false

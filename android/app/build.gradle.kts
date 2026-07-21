@@ -11,8 +11,8 @@ android {
         applicationId = "guru.theedge.twa"
         minSdk = 24
         targetSdk = 35
-        versionCode = 4
-        versionName = "1.2"
+        versionCode = 6
+        versionName = "1.4"
     }
 
     signingConfigs {
@@ -56,6 +56,6 @@ dependencies {
     implementation("androidx.webkit:webkit:1.11.0")
     implementation("com.google.android.material:material:1.12.0")
 
-    // Google Play Billing
-    implementation("com.android.billingclient:billing-ktx:6.2.1")
+    // Google Play Billing v8 (required by Aug 31, 2026)
+    implementation("com.android.billingclient:billing-ktx:8.0.0")
 }
