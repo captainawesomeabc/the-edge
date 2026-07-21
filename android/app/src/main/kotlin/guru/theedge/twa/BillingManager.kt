@@ -68,10 +68,14 @@ class BillingManager(private val activity: MainActivity) : PurchasesUpdatedListe
             .setProductList(productList)
             .build()
 
-        billingClient.queryProductDetailsAsync(params) { result, detailsList ->
-            if (result.responseCode == BillingClient.BillingResponseCode.OK && detailsList.isNotEmpty()) {
-                productDetails = detailsList[0]
-                Log.d(TAG, "Product details loaded: ${productDetails?.title}")
+        // Billing v8: callback receives QueryProductDetailsResult instead of List<ProductDetails>
+        billingClient.queryProductDetailsAsync(params) { result, detailsResult ->
+            if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+                val detailsList = detailsResult.productDetailsList
+                if (detailsList.isNotEmpty()) {
+                    productDetails = detailsList[0]
+                    Log.d(TAG, "Product details loaded: ${productDetails?.title}")
+                }
             } else {
                 Log.e(TAG, "Failed to load product details: ${result.debugMessage}")
             }
@@ -105,7 +109,6 @@ class BillingManager(private val activity: MainActivity) : PurchasesUpdatedListe
         val details = productDetails
         if (details == null) {
             Log.e(TAG, "Product details not loaded yet")
-            // Retry connection
             if (billingClient.connectionState != BillingClient.ConnectionState.CONNECTED) {
                 connectBillingClient()
             } else {
@@ -114,7 +117,6 @@ class BillingManager(private val activity: MainActivity) : PurchasesUpdatedListe
             return
         }
 
-        // Get the subscription offer
         val offerToken = details.subscriptionOfferDetails?.firstOrNull()?.offerToken
         if (offerToken == null) {
             Log.e(TAG, "No offer token available")

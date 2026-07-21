@@ -57,5 +57,5 @@ dependencies {
     implementation("com.google.android.material:material:1.12.0")
 
     // Google Play Billing v8 (required by Aug 31, 2026)
-    implementation("com.android.billingclient:billing-ktx:8.0.0")
+    implementation("com.android.billingclient:billing:8.0.0")
 }
