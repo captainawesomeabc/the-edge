@@ -12,14 +12,10 @@ jobs:
           java-version: 17
       - uses: gradle/actions/setup-gradle@v4
         with:
+          gradle-version: '8.6'
           validate-wrappers: false
       - name: Suppress SDK warning
         run: echo "android.suppressUnsupportedCompileSdk=36" >> android/gradle.properties
-      - name: Fix Gradle wrapper
-        run: |
-          cd android
-          chmod +x gradlew
-          ./gradlew wrapper --gradle-version 8.6
       - name: Decode Keystore
         run: base64 -d android/keystore.b64 > android/keystore.jks
       - name: Build Release AAB
@@ -29,7 +25,7 @@ jobs:
           CM_KEYSTORE_PASSWORD: DSG-Upload-2026!
           CM_KEY_ALIAS: upload
           CM_KEY_PASSWORD: DSG-Upload-2026!
-        run: ./gradlew bundleRelease
+        run: gradle bundleRelease
       - name: Upload AAB
         uses: actions/upload-artifact@v4
         with:
