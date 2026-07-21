@@ -16,7 +16,10 @@ jobs:
       - name: Suppress SDK warning
         run: echo "android.suppressUnsupportedCompileSdk=36" >> android/gradle.properties
       - name: Fix Gradle wrapper
-        run: cd android && ./gradlew wrapper --gradle-version 8.6
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew wrapper --gradle-version 8.6
       - name: Decode Keystore
         run: base64 -d android/keystore.b64 > android/keystore.jks
       - name: Build Release AAB
