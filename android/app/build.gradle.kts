@@ -23,6 +23,7 @@ android {
                 storePassword = System.getenv("CM_KEYSTORE_PASSWORD") ?: ""
                 keyAlias = System.getenv("CM_KEY_ALIAS") ?: ""
                 keyPassword = System.getenv("CM_KEY_PASSWORD") ?: ""
+                storeType = "PKCS12"
             }
         }
     }
